@@ -1,2 +1,14 @@
 # mosdns-config
-自用 OpenWrt mosdns 设置
+自用 OpenWrt [mosdns](https://github.com/IrineSistiana/mosdns) 设置
+
+可以搭配 [passwall](https://github.com/xiaorouji/openwrt-passwall/tree/luci) 黑名单模式透明代理使用。可以不修改 [passwall](https://github.com/xiaorouji/openwrt-passwall/tree/luci) 的 DNS 设置，只有直连才经过 [mosdns](https://github.com/IrineSistiana/mosdns)。其中远程 DNS 使用 https://apad.pro/dns-doh/ 和 [iQDNS](https://iqdns.xyz/all.html)。
+
+主要的分流思路是国内走电信 DNS，akamai 等 CDN 域名走 [AliDNS](https://alidns.com/)，其余域名如解析为被墙或者国外IP，采用可信 DNS。
+
+参考：
+
+>[pmkol/easymosdns](https://github.com/pmkol/easymosdns)
+
+>[QiuSimons/openwrt-mos](https://github.com/QiuSimons/openwrt-mos)
+
+>[sbwml/luci-app-mosdns](https://github.com/sbwml/luci-app-mosdns)
