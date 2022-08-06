@@ -38,15 +38,15 @@ data_providers:
   #   auto_reload:           true
 
   - tag:                   gfwlist
-    file:                  "/usr/share/passwall/rules/gfwlist.txt"
+    file:                  "/usr/share/passwall/rules/gfwlist"
     auto_reload:           true
 
   - tag:                   proxy_host
-    file:                  "/usr/share/passwall/rules/proxy_host.txt"
+    file:                  "/usr/share/passwall/rules/proxy_host"
     auto_reload:           true
 
   - tag:                   proxy_ip
-    file:                  "/usr/share/passwall/rules/proxy_ip.txt"
+    file:                  "/usr/share/passwall/rules/proxy_ip"
     auto_reload:           true
 
   - tag:                   cdncn
@@ -58,7 +58,7 @@ data_providers:
     auto_reload:           true
 
   - tag:                   domains_excluded
-    file:                  "/usr/share/passwall/rules/domains_excluded.txt"
+    file:                  "/usr/share/passwall/rules/domains_excluded"
     auto_reload:           true
 
 # 插件
