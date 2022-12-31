@@ -11,6 +11,8 @@
 
 主要的分流思路是国内走电信 DNS，akamai 等 CDN 域名走 [AliDNS](https://alidns.com/)，其余域名如解析为被墙或者国外IP，采用可信 DNS。
 
+default.yaml 放在 `/usr/share/mosdns/` 目录下，配合 [sbwml/luci-app-mosdns](https://github.com/sbwml/luci-app-mosdns) 使用。
+
 参考：
 
 >[pmkol/easymosdns](https://github.com/pmkol/easymosdns)
