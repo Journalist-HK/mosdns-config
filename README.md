@@ -1,7 +1,7 @@
 # mosdns-config
 自用 OpenWrt [mosdns](https://github.com/IrineSistiana/mosdns) 设置
 
-可以搭配 [passwall](https://github.com/xiaorouji/openwrt-passwall/tree/luci) 黑名单模式透明代理使用。可以不修改 [passwall](https://github.com/xiaorouji/openwrt-passwall/tree/luci) 的 DNS 设置，只有直连才经过 [mosdns](https://github.com/IrineSistiana/mosdns)。其中远程 DNS 使用 https://apad.pro/dns-doh/ 和 [iQDNS](https://iqdns.xyz/all.html)。
+可以搭配 [passwall](https://github.com/xiaorouji/openwrt-passwall/tree/luci) 黑名单模式透明代理使用。可以不修改 [passwall](https://github.com/xiaorouji/openwrt-passwall/tree/luci) 的 DNS 设置，只有直连才经过 [mosdns](https://github.com/IrineSistiana/mosdns)。其中远程 DNS 使用 https://apad.pro/dns-doh/ 和 [iQDNS](https://iqiq.io/servers.html)。
 
 需要修改 [passwall](https://github.com/xiaorouji/openwrt-passwall/tree/luci) 的 gfwlist 为以下 3 个文件：
 
