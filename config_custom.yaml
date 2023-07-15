@@ -1,0 +1,242 @@
+log:
+  level: info
+  file: "/tmp/log/mosdns.log"
+
+# API 入口设置     
+api:
+  http: ":9091" # 在该地址启动 api 接口。
+
+# []string, 从其他配置文件载入 plugins 插件设置。
+# include 的插件会比本配置文件中的插件先初始化。
+include: 
+  - "/etc/mosdns/load_rules_openwrt.yaml"
+  - "/etc/mosdns/forward.yaml"
+
+plugins:
+  - tag: remote_sequence
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $ecs_tw
+      - exec: $forward_remote
+      - exec: return
+
+  - tag: "fallback"
+    type: "fallback"
+    args:
+      primary: forward_easy    # easy
+      secondary: forward_remote  # remote
+      threshold: 180           # 无响应回滚阈值。单位毫秒。默认 500 。
+      always_standby: true     # 副可执行插件始终待命。
+
+  - tag: fallback_sequence
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $ecs_tw
+      - exec: $fallback
+      - exec: return
+
+  - tag: has_resp_sequence
+    type: sequence
+    args:
+      - matches:
+          - has_resp
+        exec: accept
+
+  # IP 优选
+  - tag: blackhole_akamai # 替换部分 AKAMAI 域名 IP，详见 https://github.com/IrineSistiana/mosdns/discussions/489
+    type: sequence
+    args:
+      - exec: black_hole 119.149.188.15 223.44.51.33 202.142.229.59 # best Akamai IP, should be modified regularly
+      - exec: ttl 3600-0
+      - exec: jump has_resp_sequence # 运行 black_hole 之后接受请求，不再进行后续判断
+
+  - tag: blackhole_cloudflare
+    type: sequence
+    args:
+      - exec: black_hole 104.17.192.100 198.41.221.5 172.64.32.199 # best cloudflare IP, should be modified regularly
+      - exec: ttl 3600-0
+      - exec: jump has_resp_sequence
+
+  - tag: blackhole_cloudfront
+    type: sequence
+    args:
+      - exec: black_hole 13.33.33.52 52.84.228.48 13.227.254.3 13.225.0.66 # best cloudfront IP, should be modified regularly
+      - exec: ttl 3600-0
+      - exec: jump has_resp_sequence
+
+  - tag: remote_sequence_us
+    type: sequence
+    args:
+      - exec: $ecs_us
+      - exec: $forward_remote
+      - exec: jump has_resp_sequence
+
+  - tag: fallback_sequence_us
+    type: sequence
+    args:
+      - exec: $ecs_us
+      - exec: $fallback
+      - exec: jump has_resp_sequence
+
+  - tag: change_cdn_ip_akamai
+    type: sequence
+    args:
+      - matches:
+          - cname akamai.net
+        exec: jump blackhole_akamai
+      - exec: return
+
+  - tag: change_cdn_ip_cf # https://github.com/XIU2/CloudflareSpeedTest/discussions/317
+    type: sequence
+    args:
+      - matches:
+          - resp_ip $cloudflare_ip
+        exec: jump blackhole_cloudflare
+      - matches:
+          - resp_ip $cloudfront_ip
+        exec: jump blackhole_cloudfront
+      - exec: return
+
+  - tag: reforward_fastly_remote # 使用 US ECS 再次查询优化 Fastly CDN 结果
+    type: sequence
+    args:
+      - matches:
+          - resp_ip $fastly_ip
+        exec: jump remote_sequence_us
+      - exec: return
+
+  - tag: reforward_fastly_fallback # 使用 US ECS 再次查询优化 Fastly CDN 结果
+    type: sequence
+    args:
+      - matches:
+          - resp_ip $fastly_ip
+        exec: jump fallback_sequence_us
+      - exec: return
+
+  - tag: gfw_sequence
+    type: sequence
+    args:
+      - exec: jump remote_sequence
+      - exec: jump change_cdn_ip_akamai
+      - exec: jump change_cdn_ip_cf
+      - exec: jump reforward_fastly_remote
+      - exec: jump has_resp_sequence
+
+  - tag: default_sequence
+    type: sequence
+    args:
+      - exec: jump fallback_sequence
+      - exec: jump change_cdn_ip_akamai
+      - exec: jump change_cdn_ip_cf
+      - exec: jump reforward_fastly_fallback
+      - exec: jump has_resp_sequence
+
+  - tag: ali_sequence
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $forward_alidns
+      - exec: jump change_cdn_ip_akamai
+      - exec: jump change_cdn_ip_cf
+      - exec: jump reforward_fastly_fallback
+      - exec: jump has_resp_sequence
+
+  - tag: reforward_banned_ip
+    type: sequence
+    args:
+      - exec: debug_print "DNS poisoning detected"
+      - exec: jump fallback_sequence
+      - exec: return
+
+  - tag: main
+    type: sequence
+    args:
+      - matches:
+          - qtype 65
+        exec: reject 3 # 屏蔽 QTYPE 65
+
+      - exec: $hosts
+      - exec: jump has_resp_sequence
+
+      - matches:
+          - qname $privatelist "ip6-localhost" "ip6-loopback" #内网域名
+        exec: reject 5 # 屏蔽内网域名
+        # exec: $forward_lan # 查询内网 DNS
+      # - exec: jump has_resp_sequence
+
+      - matches:
+          - qname $whitelist # DDNS 和 其他白名单
+        exec: $forward_local
+      - exec: ttl 60-180
+      - exec: jump has_resp_sequence
+
+      - matches:
+          - qname $blocklist # 黑名单，可添加去广告列表
+        exec: reject 5
+
+      - exec: $cache_0 # 下面的请求结果均进入缓存
+
+      - matches:
+          - qname $greylist
+        exec: jump default_sequence # 污染域名请求 EASY DNS
+
+      - matches:
+          - qname $geosite_cn # 国内域名走阿里 DNS，也可以走运营商 DNS
+        exec: $forward_alidns
+      - exec: jump has_resp_sequence
+
+      - matches:
+          - qname $gfwlist
+        exec: jump gfw_sequence # GFW 域名直接请求海外 DNS
+
+      # - matches:
+      #     - qname $cdnlist $akamailist
+      #   exec: jump ali_sequence # 我这里用阿里 DNS 请求 AKAMAI 域名返回东京电信的概率较高，可以替换成其他。
+
+      - exec: $forward_alidns # 默认使用阿里 DNS，如果担心 DNS 泄露，可以调换顺序，把 fallback 放在前面，代价是延迟会变高。这种情况下可以使用前面的 cdnlist 域名先做判断。
+      # 策略 1：将海外域名交给可信 DNS 处理。
+      - matches:
+          - "resp_ip $geoip_cn"
+        exec: jump has_resp_sequence # 返回国内域名直接接受
+      - matches:
+          - resp_ip $banned_ip # 记录被污染域名，日后加入 gerylist。可以去掉。
+        exec: debug_print "DNS poisoning detected"
+      - exec: jump change_cdn_ip_akamai
+      - matches: # 有些 AKAMAI 的域名不能直接替换 IP（没有绑定全证书），此处多加一次判断，接受所有 AKAMAI CDN 的 IP。
+          - cname $akamailist
+        exec: jump has_resp_sequence
+      - exec: jump change_cdn_ip_cf
+      - exec: jump reforward_fastly_fallback
+      - exec: jump has_resp_sequence
+      - exec: jump default_sequence # 其余域名使用可信 DNS
+
+      # 策略 2：发现返回结果被污染，将域名再次交给可信 DNS 处理，否则直接接受。
+      # - matches:
+      #     - resp_ip $banned_ip
+      #   exec: jump reforward_banned_ip
+      # - exec: jump has_resp_sequence
+
+  - tag: udp_server
+    type: udp_server
+    args:
+      entry: main
+      listen: ":5335"
+  # - tag: tcp_server
+  #   type: tcp_server
+  #   args:
+  #     entry: main
+  #     listen: ":5335"
+
+  - tag: "http_server"
+    type: "http_server"
+    args:
+      entries:                 # []extry
+        - path: /dns-query     # 本路径执行   
+          exec: main # 可执行插件的 tag。
+      src_ip_header: "X-Forwarded-For"  # 从 HTTP 头获取用户 IP。
+      listen: :5443  # 监听地址。
+      # cert: "/etc/nginx/conf.d/_lan.crt" # 留空 cert 和 key 后会禁用 TLS。
+      # key: "/etc/nginx/conf.d/_lan.key" 
+      idle_timeout: 10       # 空连接超时。单位秒。默认 30。

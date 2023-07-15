@@ -1,0 +1,73 @@
+plugins:
+  - tag: ecs_cn
+    type: sequence
+    args:
+      - exec: ecs 58.208.0.0/12 240e:3a0::/28 # 电信，自行修改
+      - exec: return
+
+  - tag: ecs_tw
+    type: sequence
+    args:
+      - exec: ecs 168.95.0.0/16 2001:b000:100::/40
+      - exec: return
+
+  - tag: ecs_us
+    type: sequence
+    args:
+      - exec: ecs 38.94.109.0/24 2602:fbdb::/40
+      - exec: return
+
+  # 不应处理本地 DNS 请求，防止死循环。正确顺序应该是 dnsmasq --> OpenClash --> mosdns。
+  # - tag: "forward_lan"
+  #   type: forward
+  #   args:
+  #     concurrent: 1
+  #     upstream:
+  #       - addr: "192.168.1.1"
+
+  - tag: "forward_local"
+    type: forward
+    args:
+      concurrent: 2
+      upstreams:
+        - addr: "218.2.2.2" # 运营商 DNS，自行修改
+        - addr: "218.4.4.4" # 运营商 DNS，自行修改
+
+  - tag: "forward_alidns"
+    type: forward
+    args:
+      concurrent: 1
+      upstreams:
+        - addr: "https://dns.alidns.com/dns-query"
+          dial_addr: "223.5.5.5"
+          enable_pipeline: false
+          enable_http3: false
+          max_conns: 2
+
+  - tag: "forward_easy"
+    type: "forward"
+    args:
+      concurrent: 1
+      upstreams:
+        - addr: "https://doh.apad.pro/dns-query"
+          bootstrap: "223.5.5.5"
+          enable_pipeline: false
+          enable_http3: false
+          max_conns: 2
+
+  - tag: "forward_remote"
+    type: "forward"
+    args:
+      concurrent: 3 # 并发数。每次请求随机选取 concurrent 个 upstreams 发送请求。
+                    # 取最快返回的应答。超过 3 最多选 3 个。默认 1。
+      upstreams:
+        - addr: "https://1.1.1.1/dns-query"
+          enable_pipeline: false
+          enable_http3: false
+          max_conns: 2
+        - addr: "tls://1.0.0.1"
+          enable_pipeline: true
+          max_conns: 2
+        - addr: "tcp://208.67.220.220:5353" # CISCO OpenDNS
+          enable_pipeline: true
+          max_conns: 2

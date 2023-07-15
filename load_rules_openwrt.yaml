@@ -1,0 +1,121 @@
+plugins:
+  - tag: "hosts"
+    type: "hosts"
+    args:
+      # entries:
+      #   - "google.com 108.177.122.113"
+      files:
+        - "/etc/mosdns/rule/hosts.txt"
+
+  - tag: geosite_cn # 国内域名
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/china_domain_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_domain_list.txt
+
+  - tag: geoip_cn # 国内 IP
+    type: ip_set
+    args:
+      files:
+        - "/etc/mosdns/rule/china_ip_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_ip_list.txt
+
+  - tag: privatelist # 内网域名
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/private.txt" # https://raw.githubusercontent.com/Loyalsoldier/domain-list-custom/release/private.txt
+
+  - tag: whitelist
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/white_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/white_list.txt
+
+  - tag: blocklist
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/block_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/block_list.txt
+
+  - tag: greylist # 用来存放被污染的域名，目前是空的。
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/grey_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/grey_list.txt
+
+  - tag: akamailist
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/akamai_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/akamai_domain_list.txt
+
+  # - tag: cdnlist
+  #   type: domain_set
+  #   args:
+  #     exps:
+  #       # - "cloudflare.com"
+  #       # - "cloudfront.net"
+  #       - "ghproxy.com"
+  #       - "microsoft.com"
+  #       - "playstation.com"
+  #       - "playstation.net"
+  #       - "redhat.com"
+  #       - "samsung.com"
+  #       - "ubi.com"
+  #       - "ubisoft.com"
+  #       - "xboxlive.com"
+  #     files:
+  #       - "/etc/mosdns/rule/cdn_domain_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt
+
+  - tag: gfwlist
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/gfw.txt" # https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt
+        - "/etc/mosdns/rule/greatfire.txt" # https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/greatfire.txt
+        - "/etc/mosdns/rule/custom_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/custom_list.txt
+
+  - tag: banned_ip
+    type: ip_set
+    args:
+      ips:
+        - "0.0.0.0/8"
+        - "2001::/32"
+      files:
+        - "/etc/mosdns/rule/gfw_ip_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/gfw_ip_list.txt
+        - "/etc/mosdns/rule/facebook.txt" # https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt
+        # - "/etc/mosdns/rule/telegram.txt" # https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt
+        - "/etc/mosdns/rule/twitter.txt" # https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/twitter.txt
+
+  - tag: cloudflare_ip
+    type: ip_set
+    args:
+      files:
+        - "/etc/mosdns/rule/ip.txt" # https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt
+        - "/etc/mosdns/rule/ipv6.txt" # https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt
+
+  - tag: cloudfront_ip
+    type: ip_set
+    args:
+      files:
+        - "/etc/mosdns/rule/cloudfront.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront.txt
+
+  - tag: fastly_ip
+    type: ip_set
+    args:
+      files:
+        - "/etc/mosdns/rule/fastly.txt" # https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/fastly.txt
+
+  - tag: "cache_0"
+    type: "cache"
+    args:
+      size: 8192  # 默认: 1024。
+      # lazy_cache_ttl > 0 会启用 lazy cache。
+      # 所有应答都会在缓存中存留 lazy_cache_ttl 秒，但自身的 TTL 仍然有效。如果命中过期的应答，
+      # 则缓存会立即返回 TTL 为 5 的应答，然后自动在后台发送请求更新数据。
+      lazy_cache_ttl: 259200  # 默认: 0（禁用 lazy cache）。
+                              # 建议值 86400（1天）~ 259200（3天）
+      dump_file: /usr/share/mosdns/cache.dump
+      # (实验性) 自动保存间隔。单位秒。默认 600。
+      # 如果距离上次 dump 有 1024 次更新，则自动保存。
+      dump_interval: 7200
