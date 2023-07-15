@@ -138,7 +138,7 @@ plugins:
   - tag: ali_sequence
     type: sequence
     args:
-      - exec: prefer_ipv4
+      # - exec: prefer_ipv4
       - exec: $forward_alidns
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip_cf
@@ -186,8 +186,7 @@ plugins:
 
       - matches:
           - qname $geosite_cn # 国内域名走阿里 DNS，也可以走运营商 DNS
-        exec: $forward_alidns
-      - exec: jump has_resp_sequence
+        exec: jump ali_sequence
 
       - matches:
           - qname $gfwlist
@@ -211,7 +210,6 @@ plugins:
         exec: jump has_resp_sequence
       - exec: jump change_cdn_ip_cf
       - exec: jump reforward_fastly_fallback
-      - exec: jump has_resp_sequence
       - exec: jump default_sequence # 其余域名使用可信 DNS
 
       # 策略 2：发现返回结果被污染，将域名再次交给可信 DNS 处理，否则直接接受。
