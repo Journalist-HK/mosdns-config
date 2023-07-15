@@ -1,7 +1,7 @@
 # mosdns-config
 ## 自用 OpenWrt [mosdns](https://github.com/IrineSistiana/mosdns) v5 设置
 
-yaml 文件应放在 `/etc/mosdns/` 目录下，可配合 luci-app-mosdns 使用。
+yaml 文件应放在 `/etc/mosdns/` 目录下，可配合 luci-app-mosdns 使用。如果要在公网使用，建议将 OpenWrt 自带的 uHTTPd 更换成 Nginx 并设置反代。
 
 可以搭配 [OpenClash](https://github.com/vernesong/OpenClash) 使用。需要将 Clash 内置 DNS 指向 mosdns。使用 luci-app-mosdns 时需关闭其自带的 DNS 转发选项，开启 OpenClash 的 DNS 劫持。顺序应为：Dnsmasq &rarr; OpenClash &rarr; mosdns。
 
@@ -25,8 +25,6 @@ dns:
 - https://github.com/IrineSistiana/mosdns/discussions/489
 
 对于使用 4 个常见 CDN 的域名进行 IP 替换。其中对于 Fastly 站点，使用美国 EDNS 重新请求。
-
-
 
 参考：
 
