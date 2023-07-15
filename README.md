@@ -21,10 +21,14 @@ dns:
 主要的分流思路是白名单走运营商 DNS，国内和 Akamai 走 [AliDNS](https://alidns.com/)，其余域名如解析为被墙或者国外IP，采用可信 DNS。其中远程 DNS 使用 [EasyMosdns](https://apad.pro/dns-doh/)。
 
 在此基础上，参考了
+
 - https://github.com/XIU2/CloudflareSpeedTest/discussions/317 
 - https://github.com/IrineSistiana/mosdns/discussions/489
 
-对于使用 4 个常见 CDN 的域名进行 IP 替换。其中对于 Fastly 站点，使用美国 EDNS 重新请求。
+对于使用 4 个常见 CDN 的域名进行 IP 替换。其中对于 Fastly 站点，使用美国 EDNS 重新请求。请定期更换 IP，防止 IP 不可用。推荐以下工具：
+
+- [CloudflareSpeedTest](https://github.com/XIU2/CloudflareSpeedTest)
+- [UsbEAm Hosts Editor](https://www.dogfight360.com/blog/475/)
 
 参考：
 
