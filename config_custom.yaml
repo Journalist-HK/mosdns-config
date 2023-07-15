@@ -206,6 +206,9 @@ plugins:
           - resp_ip $banned_ip # 记录被污染域名，日后加入 gerylist。可以去掉。
         exec: debug_print "DNS poisoning detected"
       - exec: jump change_cdn_ip_akamai
+      - matches:
+          - qname $cdnlist $akamailist
+        exec: jump has_resp_sequence
       - matches: # 有些 AKAMAI 的域名不能直接替换 IP（没有绑定全证书），此处多加一次判断，接受所有 AKAMAI CDN 的 IP。
           - cname $akamailist
         exec: jump has_resp_sequence

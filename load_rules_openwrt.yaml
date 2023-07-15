@@ -49,23 +49,23 @@ plugins:
       files:
         - "/etc/mosdns/rule/akamai_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/akamai_domain_list.txt
 
-  # - tag: cdnlist
-  #   type: domain_set
-  #   args:
-  #     exps:
-  #       # - "cloudflare.com"
-  #       # - "cloudfront.net"
-  #       - "ghproxy.com"
-  #       - "microsoft.com"
-  #       - "playstation.com"
-  #       - "playstation.net"
-  #       - "redhat.com"
-  #       - "samsung.com"
-  #       - "ubi.com"
-  #       - "ubisoft.com"
-  #       - "xboxlive.com"
-  #     files:
-  #       - "/etc/mosdns/rule/cdn_domain_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt
+  - tag: cdnlist
+    type: domain_set
+    args:
+      exps:
+        # - "cloudflare.com"
+        # - "cloudfront.net"
+        - "ghproxy.com"
+        - "microsoft.com"
+        - "playstation.com"
+        - "playstation.net"
+        - "redhat.com"
+        - "samsung.com"
+        - "ubi.com"
+        - "ubisoft.com"
+        - "xboxlive.com"
+      files:
+        - "/etc/mosdns/rule/cdn_domain_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt
 
   - tag: gfwlist
     type: domain_set
