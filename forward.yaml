@@ -58,16 +58,13 @@ plugins:
   - tag: "forward_remote"
     type: "forward"
     args:
-      concurrent: 3 # 并发数。每次请求随机选取 concurrent 个 upstreams 发送请求。
+      concurrent: 2 # 并发数。每次请求随机选取 concurrent 个 upstreams 发送请求。
                     # 取最快返回的应答。超过 3 最多选 3 个。默认 1。
       upstreams:
         - addr: "https://1.1.1.1/dns-query"
           enable_pipeline: false
           enable_http3: false
           max_conns: 2
-        - addr: "tls://1.0.0.1"
-          enable_pipeline: true
-          max_conns: 2
-        - addr: "tcp://208.67.220.220:5353" # CISCO OpenDNS
+        - addr: "tcp://208.67.220.222:5353" # CISCO OpenDNS
           enable_pipeline: true
           max_conns: 2
