@@ -44,25 +44,25 @@ plugins:
           - has_resp
         exec: accept
 
-  # IP 优选
+  # IP 优选，需要定期修改，最好填写 2 - 4 个
   - tag: blackhole_akamai # 替换部分 AKAMAI 域名 IP，详见 https://github.com/IrineSistiana/mosdns/discussions/489
     type: sequence
     args:
-      - exec: black_hole 119.149.188.15 223.44.51.33 202.142.229.59 # best Akamai IP, should be modified regularly
+      - exec: black_hole 119.149.188.15 223.44.51.33 202.142.229.59 # best_akamai_ip
       - exec: ttl 3600-0
       - exec: jump has_resp_sequence # 运行 black_hole 之后接受请求，不再进行后续判断
 
   - tag: blackhole_cloudflare
     type: sequence
     args:
-      - exec: black_hole 104.17.192.100 198.41.221.5 172.64.32.199 # best cloudflare IP, should be modified regularly
+      - exec: black_hole 104.17.192.100 198.41.221.5 172.64.32.199 # best_cloudflare_ip
       - exec: ttl 3600-0
       - exec: jump has_resp_sequence
 
   - tag: blackhole_cloudfront
     type: sequence
     args:
-      - exec: black_hole 13.33.33.52 52.84.228.48 13.227.254.3 13.225.0.66 # best cloudfront IP, should be modified regularly
+      - exec: black_hole 13.33.33.52 52.84.228.48 13.227.254.3 13.225.0.66 # best_cloudfront_ip
       - exec: ttl 3600-0
       - exec: jump has_resp_sequence
 
