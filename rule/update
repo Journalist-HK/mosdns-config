@@ -7,11 +7,12 @@ mkdir -p /tmp/easymosdns \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/akamai_domain_list.txt > /tmp/easymosdns/akamai_domain_list.txt \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/block_list.txt > /tmp/easymosdns/block_list.txt \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront.txt > /tmp/easymosdns/cloudfront.txt \
+&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront_ipv6.txt > /tmp/easymosdns/cloudfront_ipv6.txt \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/custom_list.txt > /tmp/easymosdns/custom_list.txt \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/gfw_ip_list.txt > /tmp/easymosdns/gfw_ip_list.txt \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/grey_list.txt > /tmp/easymosdns/grey_list.txt \
+&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/private.txt > /tmp/easymosdns/private.txt \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/white_list.txt > /tmp/easymosdns/white_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/domain-list-custom/release/private.txt > /tmp/easymosdns/private.txt \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt > /tmp/easymosdns/facebook.txt \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/fastly.txt > /tmp/easymosdns/fastly.txt \
 && curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt > /tmp/easymosdns/telegram.txt \

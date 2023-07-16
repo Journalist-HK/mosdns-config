@@ -78,3 +78,34 @@ plugins:
         - addr: "tcp://208.67.220.220:5353" # CISCO OpenDNS
           enable_pipeline: true
           max_conns: 2
+
+  - tag: remote_sequence
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $ecs_tw
+      - exec: $forward_remote
+      - exec: return
+
+  - tag: "fallback"
+    type: "fallback"
+    args:
+      primary: forward_easy    # easy
+      secondary: forward_remote  # remote
+      threshold: 180           # 无响应回滚阈值。单位毫秒。默认 500 。
+      always_standby: true     # 副可执行插件始终待命。
+
+  - tag: fallback_sequence
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $ecs_tw
+      - exec: $fallback
+      - exec: return
+
+  - tag: has_resp_sequence
+    type: sequence
+    args:
+      - matches:
+          - has_resp
+        exec: accept

@@ -13,37 +13,6 @@ include:
   - "/etc/mosdns/forward.yaml"
 
 plugins:
-  - tag: remote_sequence
-    type: sequence
-    args:
-      - exec: prefer_ipv4
-      - exec: $ecs_tw
-      - exec: $forward_remote
-      - exec: return
-
-  - tag: "fallback"
-    type: "fallback"
-    args:
-      primary: forward_easy    # easy
-      secondary: forward_remote  # remote
-      threshold: 180           # 无响应回滚阈值。单位毫秒。默认 500 。
-      always_standby: true     # 副可执行插件始终待命。
-
-  - tag: fallback_sequence
-    type: sequence
-    args:
-      - exec: prefer_ipv4
-      - exec: $ecs_tw
-      - exec: $fallback
-      - exec: return
-
-  - tag: has_resp_sequence
-    type: sequence
-    args:
-      - matches:
-          - has_resp
-        exec: accept
-
   # IP 优选，需要定期修改，最好填写 2 - 4 个
   - tag: blackhole_akamai # 替换部分 AKAMAI 域名 IP，详见 https://github.com/IrineSistiana/mosdns/discussions/489
     type: sequence
@@ -52,12 +21,26 @@ plugins:
       - exec: ttl 3600-0
       - exec: jump has_resp_sequence # 运行 black_hole 之后接受请求，不再进行后续判断
 
+  - tag: blackhole_akamai_ipv6
+    type: sequence
+    args:
+      - exec: black_hole 2600:140b:1000::1730:d5ab 2600:140b:1000::1730:d5ce # best_akamai_ipv6
+      - exec: ttl 3600-0
+      - exec: jump has_resp_sequence
+
   - tag: blackhole_cloudflare
     type: sequence
     args:
       - exec: black_hole 104.17.192.100 198.41.221.5 172.64.32.199 # best_cloudflare_ip
       - exec: ttl 3600-0
       - exec: jump has_resp_sequence
+
+  # - tag: blackhole_cloudflare_ipv6 # 速度都很慢，替换 IP 没有意义
+  #   type: sequence
+  #   args:
+  #     - exec: black_hole 2606:4700:f1::4887:6100 2606:4700:f1::5ac8:a100 2606:4700:f1::72:f100 2606:4700:f1::4d:e854:4100 # best_cloudflare_ipv6
+  #     - exec: ttl 3600-0
+  #     - exec: jump has_resp_sequence
 
   - tag: blackhole_cloudfront
     type: sequence
@@ -66,7 +49,14 @@ plugins:
       - exec: ttl 3600-0
       - exec: jump has_resp_sequence
 
-  - tag: remote_sequence_us
+  # - tag: blackhole_cloudfront_ipv6 # 速度都很慢，替换 IP 没有意义
+  #   type: sequence
+  #   args:
+  #     - exec: black_hole 2600:9000:20e9:1edf:3560:977b:c990:1f75 2600:9000:20e9:1edf:35c0:29ed:b6ac:7b3b # best_cloudfront_ipv6
+  #     - exec: ttl 3600-0
+  #     - exec: jump has_resp_sequence
+
+  - tag: remote_sequence_us # 使用 US ECS 请求上游
     type: sequence
     args:
       - exec: prefer_ipv4
@@ -74,7 +64,7 @@ plugins:
       - exec: $forward_remote
       - exec: jump has_resp_sequence
 
-  - tag: fallback_sequence_us
+  - tag: fallback_sequence_us # 使用 US ECS 请求上游
     type: sequence
     args:
       - exec: prefer_ipv4
@@ -87,7 +77,11 @@ plugins:
     args:
       - matches:
           - cname akamai.net
+          - resp_ip 0.0.0.0/0 # 防止纯 IPV6 域名被替换
         exec: jump blackhole_akamai
+      - matches:
+          - cname akamai.net
+        exec: jump blackhole_akamai_ipv6 # 如果不需要对纯 IPV6 域名优选可以去掉这一段
       - exec: return
 
   - tag: change_cdn_ip_cf # https://github.com/XIU2/CloudflareSpeedTest/discussions/317
@@ -99,6 +93,12 @@ plugins:
       - matches:
           - resp_ip $cloudfront_ip
         exec: jump blackhole_cloudfront
+      # - matches:
+      #     - resp_ip $cloudflare_ipv6
+      #   exec: jump blackhole_cloudflare_ipv6
+      # - matches:
+      #     - resp_ip $cloudfront_ipv6
+      #   exec: jump blackhole_cloudfront_ipv6
       - exec: return
 
   - tag: reforward_fastly_remote # 使用 US ECS 再次查询优化 Fastly CDN 结果

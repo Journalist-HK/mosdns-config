@@ -79,7 +79,7 @@ plugins:
     type: ip_set
     args:
       ips:
-        - "0.0.0.0/8"
+        - "0.0.0.0/32"
         - "2001::/32"
       files:
         - "/etc/mosdns/rule/gfw_ip_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/gfw_ip_list.txt
@@ -92,13 +92,24 @@ plugins:
     args:
       files:
         - "/etc/mosdns/rule/ip.txt" # https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt
-        - "/etc/mosdns/rule/ipv6.txt" # https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt
+
+  # - tag: cloudflare_ipv6
+  #   type: ip_set
+  #   args:
+  #     files:
+  #       - "/etc/mosdns/rule/ipv6.txt" # https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt
 
   - tag: cloudfront_ip
     type: ip_set
     args:
       files:
         - "/etc/mosdns/rule/cloudfront.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront.txt
+
+  # - tag: cloudfront_ipv6
+  #   type: ip_set
+  #   args:
+  #     files:
+  #       - "/etc/mosdns/rule/cloudfront_ipv6.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront_ipv6.txt
 
   - tag: fastly_ip
     type: ip_set
