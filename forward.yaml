@@ -103,6 +103,13 @@ plugins:
       - exec: $fallback
       - exec: return
 
+  - tag: fallback_sequence_ipv6
+    type: sequence
+    args:
+      - exec: prefer_ipv6
+      - exec: $fallback
+      - exec: return
+
   - tag: has_resp_sequence
     type: sequence
     args:

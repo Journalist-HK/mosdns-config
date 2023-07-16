@@ -135,6 +135,12 @@ plugins:
       - exec: jump reforward_fastly_fallback
       - exec: jump has_resp_sequence
 
+  - tag: default_sequence_ipv6
+    type: sequence
+    args:
+      - exec: jump fallback_sequence_ipv6
+      - exec: jump has_resp_sequence
+
   - tag: ali_sequence
     type: sequence
     args:
@@ -183,6 +189,10 @@ plugins:
       - matches:
           - qname $greylist
         exec: jump default_sequence # 污染域名请求 EASY DNS
+
+      - matches:
+          - qname $ipv6list
+        exec: jump default_sequence_ipv6 # IPV6 域名请求 EASY DNS
 
       - matches:
           - qname $geosite_cn # 国内域名走阿里 DNS，也可以走运营商 DNS

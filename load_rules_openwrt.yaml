@@ -37,11 +37,17 @@ plugins:
       files:
         - "/etc/mosdns/rule/block_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/block_list.txt
 
-  - tag: greylist # 用来存放被污染的域名，目前是空的。
+  - tag: greylist # 用来存放被污染的域名。
     type: domain_set
     args:
       files:
         - "/etc/mosdns/rule/grey_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/grey_list.txt
+
+  - tag: ipv6list # 用来存放优先走 ipv6 的域名。
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/ipv6_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/ipv6_domain_list.txt
 
   - tag: akamailist
     type: domain_set
