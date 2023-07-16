@@ -45,7 +45,7 @@ plugins:
   - tag: blackhole_cloudfront
     type: sequence
     args:
-      - exec: black_hole 13.33.33.52 52.84.228.48 13.227.254.3 13.225.0.66 # best_cloudfront_ip
+      - exec: black_hole 18.172.26.139 18.172.28.94 52.84.151.126 52.84.228.48 # best_cloudfront_ip
       - exec: ttl 3600-0
       - exec: jump has_resp_sequence
 
