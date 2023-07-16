@@ -1,9 +1,9 @@
 plugins:
-  - tag: ecs_cn
-    type: sequence
-    args:
-      - exec: ecs 58.208.0.0/12 240e:3a0::/28 # 电信，自行修改
-      - exec: return
+  # - tag: ecs_cn
+  #   type: sequence
+  #   args:
+  #     - exec: ecs 58.208.0.0/12 240e:3a0::/28 # 电信，自行修改
+  #     - exec: return
 
   - tag: ecs_tw
     type: sequence
@@ -65,11 +65,16 @@ plugins:
           enable_pipeline: false
           enable_http3: false
           max_conns: 2
-        - addr: "https://doh.opendns.com/dns-query"
-          dial_addr: "146.112.41.2"
-          enable_pipeline: false
-          enable_http3: false
-          max_conns: 2
-        # - addr: "tcp://208.67.220.222:5353" # CISCO OpenDNS
-        #   enable_pipeline: true
+        # - addr: "https://doh.opendns.com/dns-query"
+        #   dial_addr: "146.112.41.2"
+        #   enable_pipeline: false
+        #   enable_http3: false
         #   max_conns: 2
+        # - addr: "https://public.dns.iij.jp/dns-query"
+        #   bootstrap: "223.5.5.5"
+        #   enable_pipeline: false
+        #   enable_http3: false
+        #   max_conns: 2
+        - addr: "tcp://208.67.220.220:5353" # CISCO OpenDNS
+          enable_pipeline: true
+          max_conns: 2
