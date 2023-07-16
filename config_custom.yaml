@@ -243,4 +243,4 @@ plugins:
       listen: :5443  # 监听地址。
       # cert: "/etc/nginx/conf.d/_lan.crt" # 留空 cert 和 key 后会禁用 TLS。
       # key: "/etc/nginx/conf.d/_lan.key" 
-      idle_timeout: 30 # 空连接超时。单位秒。默认 30。
+      idle_timeout: 30 # 默认 30。
