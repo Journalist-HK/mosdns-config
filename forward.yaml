@@ -65,6 +65,11 @@ plugins:
           enable_pipeline: false
           enable_http3: false
           max_conns: 2
-        - addr: "tcp://208.67.220.222:5353" # CISCO OpenDNS
-          enable_pipeline: true
+        - addr: "https://doh.opendns.com/dns-query"
+          dial_addr: "146.112.41.2"
+          enable_pipeline: false
+          enable_http3: false
           max_conns: 2
+        # - addr: "tcp://208.67.220.222:5353" # CISCO OpenDNS
+        #   enable_pipeline: true
+        #   max_conns: 2

@@ -171,7 +171,7 @@ plugins:
       - matches:
           - qname $whitelist # DDNS 和 其他白名单
         exec: $forward_local
-      - exec: ttl 60-180
+      - exec: ttl 5-180
       - exec: jump has_resp_sequence
 
       - matches:
@@ -223,11 +223,15 @@ plugins:
     args:
       entry: main
       listen: ":5335"
-  # - tag: tcp_server
-  #   type: tcp_server
-  #   args:
-  #     entry: main
-  #     listen: ":5335"
+
+  - tag: tcp_server
+    type: tcp_server
+    args:
+      entry: main
+      listen: ":5353"
+      # cert: "/etc/nginx/conf.d/_lan.crt" # 配置 cert 和 key 后会启用 TLS (DoT)。
+      # key: "/etc/nginx/conf.d/_lan.key" 
+      idle_timeout: 10 # 空连接超时。单位秒。默认 10。
 
   - tag: "http_server"
     type: "http_server"
@@ -239,4 +243,4 @@ plugins:
       listen: :5443  # 监听地址。
       # cert: "/etc/nginx/conf.d/_lan.crt" # 留空 cert 和 key 后会禁用 TLS。
       # key: "/etc/nginx/conf.d/_lan.key" 
-      idle_timeout: 50 # 空连接超时。单位秒。默认 30。
+      idle_timeout: 30 # 空连接超时。单位秒。默认 30。
