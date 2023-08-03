@@ -43,11 +43,17 @@ plugins:
       files:
         - "/etc/mosdns/rule/grey_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/grey_list.txt
 
-  - tag: ipv6list # 用来存放优先走 ipv6 的域名。
+  # - tag: ipv6list # 用来存放优先走 ipv6 的域名。
+  #   type: domain_set
+  #   args:
+  #     files:
+  #       - "/etc/mosdns/rule/ipv6_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/ipv6_domain_list.txt
+
+  - tag: originallist # 用来存放优不进行 IP 优选的域名。
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/ipv6_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/ipv6_domain_list.txt
+        - "/etc/mosdns/rule/original_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/original_domain_list.txt
 
   - tag: akamailist
     type: domain_set

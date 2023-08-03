@@ -31,7 +31,7 @@ plugins:
   - tag: blackhole_cloudflare
     type: sequence
     args:
-      - exec: black_hole 104.17.192.100 198.41.221.5 172.64.32.199 # best_cloudflare_ip
+      - exec: black_hole 104.17.28.149 104.17.19.131 172.64.34.51 172.64.52.29 # best_cloudflare_ip
       - exec: ttl 3600-0
       - exec: jump has_resp_sequence
 
@@ -117,7 +117,7 @@ plugins:
         exec: jump fallback_sequence_us
       - exec: return
 
-  - tag: gfw_sequence
+  - tag: gfw_sequence # 处理 GFW 域名
     type: sequence
     args:
       - exec: jump remote_sequence
@@ -126,7 +126,7 @@ plugins:
       - exec: jump reforward_fastly_remote
       - exec: jump has_resp_sequence
 
-  - tag: default_sequence
+  - tag: default_sequence # 默认使用 fallback
     type: sequence
     args:
       - exec: jump fallback_sequence
@@ -135,11 +135,17 @@ plugins:
       - exec: jump reforward_fastly_fallback
       - exec: jump has_resp_sequence
 
-  - tag: default_sequence_ipv6
+  - tag: default_sequence_original # 使用 fallback，不替换 CDN IP
     type: sequence
     args:
-      - exec: jump fallback_sequence_ipv6
+      - exec: jump fallback_sequence
       - exec: jump has_resp_sequence
+
+  # - tag: default_sequence_ipv6 # 使用 fallback，不替换 CDN IP，IPV6 优先
+  #   type: sequence
+  #   args:
+  #     - exec: jump fallback_sequence_ipv6
+  #     - exec: jump has_resp_sequence
 
   - tag: ali_sequence
     type: sequence
@@ -186,13 +192,17 @@ plugins:
 
       - exec: $cache_0 # 下面的请求结果均进入缓存
 
+      # - matches:
+      #     - qname $ipv6list
+      #   exec: jump default_sequence_ipv6 # IPV6 域名请求 EASY DNS
+
+      - matches:
+          - qname $originallist # 不进行 IP 替换的域名，通常是游戏等使用非常用端口的域名
+        exec: jump default_sequence_original
+
       - matches:
           - qname $greylist
         exec: jump default_sequence # 污染域名请求 EASY DNS
-
-      - matches:
-          - qname $ipv6list
-        exec: jump default_sequence_ipv6 # IPV6 域名请求 EASY DNS
 
       - matches:
           - qname $geosite_cn # 国内域名走阿里 DNS，也可以走运营商 DNS
@@ -209,13 +219,16 @@ plugins:
       - exec: $forward_alidns # 默认使用阿里 DNS，如果担心 DNS 泄露，可以调换顺序，把 fallback 放在前面，代价是延迟会变高。这种情况下可以使用前面的 cdnlist 域名先做判断。
       # 策略 1：将海外域名交给可信 DNS 处理。
       - matches:
-          - "resp_ip $geoip_cn"
-        exec: jump has_resp_sequence # 返回国内域名直接接受
-      - matches:
           - resp_ip $banned_ip # 记录被污染域名，日后加入 gerylist。可以去掉。
         exec: debug_print "DNS poisoning detected"
+      - matches:
+          - "resp_ip $geoip_cn"
+        exec: jump has_resp_sequence # 返回国内域名直接接受
       - exec: jump change_cdn_ip_akamai
       - matches: # 有些 AKAMAI 的域名不能直接替换 IP（没有绑定全证书），此处多加一次判断，接受所有 AKAMAI CDN 的 IP。
+          - qname $akamailist
+        exec: jump has_resp_sequence
+      - matches:
           - cname $akamailist
         exec: jump has_resp_sequence
       - exec: jump change_cdn_ip_cf
@@ -246,8 +259,8 @@ plugins:
   - tag: "http_server"
     type: "http_server"
     args:
-      entries:                 # []extry
-        - path: /dns-query     # 本路径执行   
+      entries:
+        - path: /dns-query     # 本路径执行
           exec: main # 可执行插件的 tag。
       src_ip_header: "X-Forwarded-For"  # 从 HTTP 头获取用户 IP。
       listen: :5443  # 监听地址。
