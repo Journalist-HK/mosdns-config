@@ -43,11 +43,11 @@ plugins:
       files:
         - "/etc/mosdns/rule/grey_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/grey_list.txt
 
-  # - tag: ipv6list # 用来存放优先走 ipv6 的域名。
-  #   type: domain_set
-  #   args:
-  #     files:
-  #       - "/etc/mosdns/rule/ipv6_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/ipv6_domain_list.txt
+  - tag: ipv6list # 用来存放优先走 ipv6 的域名。
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/ipv6_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/ipv6_domain_list.txt
 
   - tag: originallist # 用来存放优不进行 IP 优选的域名。
     type: domain_set
@@ -61,23 +61,23 @@ plugins:
       files:
         - "/etc/mosdns/rule/akamai_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/akamai_domain_list.txt
 
-  # - tag: cdnlist
-  #   type: domain_set
-  #   args:
-  #     exps:
-  #       # - "cloudflare.com"
-  #       # - "cloudfront.net"
-  #       - "ghproxy.com"
-  #       - "microsoft.com"
-  #       - "playstation.com"
-  #       - "playstation.net"
-  #       - "redhat.com"
-  #       - "samsung.com"
-  #       - "ubi.com"
-  #       - "ubisoft.com"
-  #       - "xboxlive.com"
-  #     files:
-  #       - "/etc/mosdns/rule/cdn_domain_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt
+  - tag: cdnlist
+    type: domain_set
+    args:
+      exps:
+        - "cloudflare.com"
+        - "cloudfront.net"
+        - "ghproxy.com"
+        - "microsoft.com"
+        - "playstation.com"
+        - "playstation.net"
+        - "redhat.com"
+        - "samsung.com"
+        - "ubi.com"
+        - "ubisoft.com"
+        - "xboxlive.com"
+      files:
+        - "/etc/mosdns/rule/cdn_domain_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt
 
   - tag: gfwlist
     type: domain_set
@@ -105,11 +105,11 @@ plugins:
       files:
         - "/etc/mosdns/rule/ip.txt" # https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt
 
-  # - tag: cloudflare_ipv6
-  #   type: ip_set
-  #   args:
-  #     files:
-  #       - "/etc/mosdns/rule/ipv6.txt" # https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt
+  - tag: cloudflare_ipv6
+    type: ip_set
+    args:
+      files:
+        - "/etc/mosdns/rule/ipv6.txt" # https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt
 
   - tag: cloudfront_ip
     type: ip_set
@@ -117,11 +117,11 @@ plugins:
       files:
         - "/etc/mosdns/rule/cloudfront.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront.txt
 
-  # - tag: cloudfront_ipv6
-  #   type: ip_set
-  #   args:
-  #     files:
-  #       - "/etc/mosdns/rule/cloudfront_ipv6.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront_ipv6.txt
+  - tag: cloudfront_ipv6
+    type: ip_set
+    args:
+      files:
+        - "/etc/mosdns/rule/cloudfront_ipv6.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront_ipv6.txt
 
   - tag: fastly_ip
     type: ip_set

@@ -4,29 +4,30 @@
 #
 mosdns_working_dir="/etc/mosdns"
 mkdir -p /tmp/easymosdns \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/akamai_domain_list.txt > /tmp/easymosdns/akamai_domain_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/block_list.txt > /tmp/easymosdns/block_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront.txt > /tmp/easymosdns/cloudfront.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront_ipv6.txt > /tmp/easymosdns/cloudfront_ipv6.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/custom_list.txt > /tmp/easymosdns/custom_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/gfw_ip_list.txt > /tmp/easymosdns/gfw_ip_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/grey_list.txt > /tmp/easymosdns/grey_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/original_domain_list.txt > /tmp/easymosdns/original_domain_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/ipv6_domain_list.txt > /tmp/easymosdns/ipv6_domain_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/private.txt > /tmp/easymosdns/private.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Journalist-HK/Rules/master/white_list.txt > /tmp/easymosdns/white_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt > /tmp/easymosdns/facebook.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/fastly.txt > /tmp/easymosdns/fastly.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt > /tmp/easymosdns/telegram.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/twitter.txt > /tmp/easymosdns/twitter.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt > /tmp/easymosdns/gfw.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/greatfire.txt > /tmp/easymosdns/greatfire.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/pmkol/easymosdns/rules/ad_domain_list.txt > /tmp/easymosdns/ad_domain_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt > /tmp/easymosdns/cdn_domain_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_domain_list.txt > /tmp/easymosdns/china_domain_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_ip_list.txt > /tmp/easymosdns/china_ip_list.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt > /tmp/easymosdns/ip.txt \
-&& curl https://ghproxy.com/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt > /tmp/easymosdns/ipv6.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/akamai_domain_list.txt > /tmp/easymosdns/akamai_domain_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/block_list.txt > /tmp/easymosdns/block_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront.txt > /tmp/easymosdns/cloudfront.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront_ipv6.txt > /tmp/easymosdns/cloudfront_ipv6.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/custom_list.txt > /tmp/easymosdns/custom_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/gfw_ip_list.txt > /tmp/easymosdns/gfw_ip_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/grey_list.txt > /tmp/easymosdns/grey_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/original_domain_list.txt > /tmp/easymosdns/original_domain_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/ipv6_domain_list.txt > /tmp/easymosdns/ipv6_domain_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/private.txt > /tmp/easymosdns/private.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Journalist-HK/Rules/master/white_list.txt > /tmp/easymosdns/white_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt > /tmp/easymosdns/facebook.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/fastly.txt > /tmp/easymosdns/fastly.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt > /tmp/easymosdns/telegram.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/twitter.txt > /tmp/easymosdns/twitter.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt > /tmp/easymosdns/gfw.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/greatfire.txt > /tmp/easymosdns/greatfire.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/pmkol/easymosdns/rules/ad_domain_list.txt > /tmp/easymosdns/ad_domain_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt > /tmp/easymosdns/cdn_domain_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_domain_list.txt > /tmp/easymosdns/china_domain_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_ip_list.txt > /tmp/easymosdns/china_ip_list.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt > /tmp/easymosdns/ip.txt \
+&& curl https://gh.con.sh/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt > /tmp/easymosdns/ipv6.txt \
 && cp -rf /tmp/easymosdns/*.txt $mosdns_working_dir/rule \
 && rm -rf /tmp/easymosdns/* \
-&& echo 'update successful'
+&& echo 'update successful, restarting mosdns'
+/etc/init.d/mosdns reload

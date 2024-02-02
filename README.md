@@ -3,9 +3,9 @@
 
 yaml 文件应放在 `/etc/mosdns/` 目录下，可配合 luci-app-mosdns 使用。如果要在公网使用，建议将 OpenWrt 自带的 uHTTPd 更换成 Nginx 并设置反代。
 
-可以搭配 [OpenClash](https://github.com/vernesong/OpenClash) 使用。需要将 Clash 内置 DNS 指向 mosdns。使用 luci-app-mosdns 时需关闭其自带的 DNS 转发选项，开启 OpenClash 的 DNS 劫持。顺序应为：Dnsmasq &rarr; OpenClash &rarr; mosdns。
+可以搭配各种代理工具使用。需要将代理工具内置 DNS 指向 mosdns。使用 luci-app-mosdns 时需关闭其自带的 DNS 转发选项。顺序应为：Dnsmasq &rarr; 代理工具 &rarr; mosdns。
 
-参考 Clash DNS 配置：
+示例 Clash DNS 配置：
 
 ```yaml
 dns:
@@ -22,13 +22,19 @@ dns:
 
 在此基础上，参考了
 
-- https://github.com/XIU2/CloudflareSpeedTest/discussions/317 
+- https://github.com/XIU2/CloudflareSpeedTest/discussions/317
 - https://github.com/IrineSistiana/mosdns/discussions/489
 
 对于使用 4 个常见 CDN 的域名进行 IP 替换。其中对于 Fastly 站点，使用美国 EDNS 重新请求。请定期更换 IP，防止 IP 不可用。推荐以下工具：
 
 - [CloudflareSpeedTest](https://github.com/XIU2/CloudflareSpeedTest)
 - [UsbEAm Hosts Editor](https://www.dogfight360.com/blog/475/)
+
+### 注意事项
+
+请修改默认的运营商 DNS 为自己的运营商；如果使用 TUN 模式，不要劫持运营商的 DNS，或者将运营商的 DNS 去掉，只用非 53 端口的上游。 #2
+
+使用 crontab 定时运行 /script/update 来更新规则。
 
 参考：
 

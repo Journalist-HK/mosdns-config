@@ -1,21 +1,31 @@
 plugins:
   # - tag: ecs_cn
-  #   type: sequence
+  #   type: ecs_handler
   #   args:
-  #     - exec: ecs 58.208.0.0/12 240e:3a0::/28 # 电信，自行修改
-  #     - exec: return
+  #     forward: false
+  #     preset: 58.208.0.0 # 电信，自行修改
+  #     send: false
+  #     mask4: 12
+  #     mask6: 28
 
   - tag: ecs_tw
-    type: sequence
+    type: ecs_handler
     args:
-      - exec: ecs 168.95.0.0/16 2001:b000:100::/40
-      - exec: return
+      forward: false
+      preset: 168.95.0.0
+      send: false
+      mask4: 16
+      # mask6: 40
+      
 
   - tag: ecs_us
-    type: sequence
+    type: ecs_handler
     args:
-      - exec: ecs 38.94.109.0/24 2602:fbdb::/40
-      - exec: return
+      forward: false
+      preset: 38.94.109.0
+      send: false
+      mask4: 24
+      # mask6: 40
 
   # 不应处理本地 DNS 请求，防止死循环。正确顺序应该是 dnsmasq --> OpenClash（可选）--> mosdns。
   # - tag: "forward_lan"
@@ -38,11 +48,10 @@ plugins:
     args:
       concurrent: 1
       upstreams:
+        - addr: "quic://223.6.6.6:853"
         - addr: "https://dns.alidns.com/dns-query"
           dial_addr: "223.5.5.5"
-          enable_pipeline: false
           enable_http3: false
-          max_conns: 2
 
   - tag: "forward_easy"
     type: "forward"
@@ -50,34 +59,27 @@ plugins:
       concurrent: 1
       upstreams:
         - addr: "https://doh.apad.pro/dns-query"
-          bootstrap: "223.5.5.5"
-          enable_pipeline: false
+          bootstrap: "218.2.2.2"
           enable_http3: false
-          max_conns: 2
 
   - tag: "forward_remote"
     type: "forward"
     args:
-      concurrent: 2 # 并发数。每次请求随机选取 concurrent 个 upstreams 发送请求。
+      concurrent: 1 # 并发数。每次请求随机选取 concurrent 个 upstreams 发送请求。
                     # 取最快返回的应答。超过 3 最多选 3 个。默认 1。
       upstreams:
-        - addr: "https://1.1.1.1/dns-query"
-          enable_pipeline: false
+        - addr: "https://162.159.36.1/dns-query"
           enable_http3: false
-          max_conns: 2
+        - addr: "https://162.159.46.1/dns-query"
+          enable_http3: false
         # - addr: "https://doh.opendns.com/dns-query"
         #   dial_addr: "146.112.41.2"
-        #   enable_pipeline: false
         #   enable_http3: false
-        #   max_conns: 2
         # - addr: "https://public.dns.iij.jp/dns-query"
-        #   bootstrap: "223.5.5.5"
-        #   enable_pipeline: false
+        #   dial_addr: 103.2.57.5
         #   enable_http3: false
-        #   max_conns: 2
-        - addr: "tcp://208.67.220.220:5353" # CISCO OpenDNS
-          enable_pipeline: true
-          max_conns: 2
+        # - addr: "tcp://208.67.220.220:5353" # CISCO OpenDNS
+        #   enable_pipeline: true
 
   - tag: remote_sequence
     type: sequence
@@ -92,7 +94,7 @@ plugins:
     args:
       primary: forward_easy    # easy
       secondary: forward_remote  # remote
-      threshold: 180           # 无响应回滚阈值。单位毫秒。默认 500 。
+      threshold: 360           # 无响应回滚阈值。单位毫秒。默认 500 。
       always_standby: true     # 副可执行插件始终待命。
 
   - tag: fallback_sequence
@@ -103,12 +105,12 @@ plugins:
       - exec: $fallback
       - exec: return
 
-  # - tag: fallback_sequence_ipv6
-  #   type: sequence
-  #   args:
-  #     - exec: prefer_ipv6
-  #     - exec: $fallback
-  #     - exec: return
+  - tag: fallback_sequence_ipv6
+    type: sequence
+    args:
+      - exec: prefer_ipv6
+      - exec: $fallback
+      - exec: return
 
   - tag: has_resp_sequence
     type: sequence
