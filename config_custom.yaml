@@ -166,7 +166,7 @@ plugins:
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip_cf
       - exec: jump reforward_fastly_fallback
-      - exec: jump has_resp_sequence
+      - exec: accept # 查询失败也会停止，防止后续查询其他上游
 
   - tag: ali_sequence_ipv4
     type: sequence
