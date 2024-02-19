@@ -32,7 +32,7 @@ dns:
 
 ### 注意事项
 
-1. 请修改默认的运营商 DNS 为自己的运营商；如果使用 TUN 模式，不要劫持运营商的 DNS，或者将运营商的 DNS 去掉，只用非 53 端口的上游。[#2](/Journalist-HK/mosdns-config/issues/2)
+1. 请修改默认的运营商 DNS 为自己的运营商；如果使用 TUN 模式，不要劫持运营商的 DNS，或者将运营商的 DNS 去掉，只用非 53 端口的上游。[#2](https://github.com/Journalist-HK/mosdns-config/issues/2)
 
 1. 可以通过 socks5 代理来提高境外DNS的联通性。建议使用单独的代理程序，避免相互依赖。
 
