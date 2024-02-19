@@ -70,6 +70,7 @@ plugins:
       upstreams:
         - addr: "https://162.159.36.1/dns-query"
           enable_http3: false
+          # socks5: "127.0.0.1:1080" # 目前暂不支持用户名密码认证，只支持基于 TCP 的协议
         - addr: "https://162.159.46.1/dns-query"
           enable_http3: false
         # - addr: "https://doh.opendns.com/dns-query"

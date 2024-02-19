@@ -32,9 +32,24 @@ dns:
 
 ### 注意事项
 
-请修改默认的运营商 DNS 为自己的运营商；如果使用 TUN 模式，不要劫持运营商的 DNS，或者将运营商的 DNS 去掉，只用非 53 端口的上游。 #2
+1. 请修改默认的运营商 DNS 为自己的运营商；如果使用 TUN 模式，不要劫持运营商的 DNS，或者将运营商的 DNS 去掉，只用非 53 端口的上游。[#2](/Journalist-HK/mosdns-config/issues/2)
 
-使用 crontab 定时运行 /script/update 来更新规则。
+1. 可以通过 socks5 代理来提高境外DNS的联通性。建议使用单独的代理程序，避免相互依赖。
+
+    ```yaml
+      - tag: "forward_remote"
+        type: "forward"
+        args:
+          concurrent: 1
+          upstreams:
+            - addr: "https://162.159.36.1/dns-query"
+              enable_http3: false
+              socks5: "127.0.0.1:1080" # 目前暂不支持用户名密码认证，只支持基于 TCP 的协议
+            - addr: "https://162.159.46.1/dns-query"
+              enable_http3: false
+    ```
+
+1. 使用 crontab 定时运行 /script/update 来更新规则。
 
 参考：
 
