@@ -196,7 +196,7 @@ plugins:
       - exec: jump has_resp_sequence
 
       - matches:
-          - qname $privatelist "ip6-localhost" "ip6-loopback" #内网域名
+          - qname $privatelist #内网域名
         exec: reject 5 # 屏蔽内网域名
         # exec: $forward_lan # 查询内网 DNS
       # - exec: jump has_resp_sequence
@@ -234,7 +234,7 @@ plugins:
         exec: jump gfw_sequence # GFW 域名直接请求海外 DNS
 
       - matches:
-          - qname $cdnlist $akamailist apple.com icloud.com
+          - qname $cdnlist $akamailist apple.com icloud.com edgesuite.net msftconnecttest.com trafficmanager.net
         exec: jump ali_sequence_ipv4 # 我这里用阿里 DNS 请求 AKAMAI 域名返回东京电信的概率较高，可以替换成其他。
 
       # 策略 1：默认查询国内上游，入返回境外 IP，再次将域名交给可信 DNS 查询。

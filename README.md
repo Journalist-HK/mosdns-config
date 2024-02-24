@@ -1,5 +1,5 @@
 # mosdns-config
-## 自用 OpenWrt [mosdns](https://github.com/IrineSistiana/mosdns) v5 设置
+## [mosdns](https://github.com/IrineSistiana/mosdns) v5 配置
 
 yaml 文件应放在 `/etc/mosdns/` 目录下，可配合 luci-app-mosdns 使用。如果要在公网使用，建议将 OpenWrt 自带的 uHTTPd 更换成 Nginx 并设置反代。
 
@@ -34,7 +34,7 @@ dns:
 
 1. 请修改默认的运营商 DNS 为自己的运营商；如果使用 TUN 模式，不要劫持运营商的 DNS，或者将运营商的 DNS 去掉，只用非 53 端口的上游。[#2](https://github.com/Journalist-HK/mosdns-config/issues/2)
 
-1. 可以通过 socks5 代理来提高境外DNS的联通性。建议使用单独的代理程序，避免相互依赖。
+1. 可以通过 socks5 代理来提高境外 DNS 的联通性。建议使用单独的代理程序，避免相互依赖。
 
     ```yaml
       - tag: "forward_remote"
