@@ -67,7 +67,6 @@ plugins:
       exps:
         - "cloudflare.com"
         - "cloudfront.net"
-        - "ghproxy.com"
         - "microsoft.com"
         - "playstation.com"
         - "playstation.net"

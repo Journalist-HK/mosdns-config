@@ -22,9 +22,9 @@ plugins:
     type: ecs_handler
     args:
       forward: false
-      preset: 38.94.109.0
+      preset: 38.106.0.0
       send: false
-      mask4: 24
+      mask4: 18
       # mask6: 40
 
   # 不应处理本地 DNS 请求，防止死循环。正确顺序应该是 dnsmasq --> OpenClash（可选）--> mosdns。
