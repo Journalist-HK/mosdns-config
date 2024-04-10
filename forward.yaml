@@ -86,7 +86,8 @@ plugins:
     type: sequence
     args:
       - exec: prefer_ipv4
-      - exec: $ecs_tw
+      # - exec: $ecs_tw
+      - exec: $ecs_us
       - exec: $forward_remote
       - exec: return
 
@@ -102,7 +103,8 @@ plugins:
     type: sequence
     args:
       - exec: prefer_ipv4
-      - exec: $ecs_tw
+      # - exec: $ecs_tw
+      - exec: $ecs_us
       - exec: $fallback
       - exec: return
 

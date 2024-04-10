@@ -25,7 +25,7 @@ dns:
 - https://github.com/XIU2/CloudflareSpeedTest/discussions/317
 - https://github.com/IrineSistiana/mosdns/discussions/489
 
-对于使用 4 个常见 CDN 的域名进行 IP 替换。其中对于 Fastly 站点，使用美国 EDNS 重新请求。请定期更换 IP，防止 IP 不可用。推荐以下工具：
+对于使用常见 CDN 的域名进行 IP 替换。~~其中对于 Fastly 站点，使用美国 EDNS 重新请求。~~ 默认使用美国 EDNS。对于 Fastly 站点，请参考 [[讨论] 实现 fastly 优选线路的方案](https://github.com/IrineSistiana/mosdns/discussions/511)。请定期更换 IP，防止 IP 不可用。推荐以下工具：
 
 - [CloudflareSpeedTest](https://github.com/XIU2/CloudflareSpeedTest)
 - [UsbEAm Hosts Editor](https://www.dogfight360.com/blog/475/)

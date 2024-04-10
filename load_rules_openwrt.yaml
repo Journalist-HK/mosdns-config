@@ -7,6 +7,18 @@ plugins:
       files:
         - "/etc/mosdns/rule/hosts.txt"
 
+  - tag: "hosts_fastly"
+    type: "hosts"
+    args:
+      files:
+        - "/etc/mosdns/rule/hosts_fastly.txt"
+
+  - tag: "hosts_akamai"
+    type: "hosts"
+    args:
+      files:
+        - "/etc/mosdns/rule/hosts_akamai.txt"
+
   - tag: geosite_cn # 国内域名
     type: domain_set
     args:

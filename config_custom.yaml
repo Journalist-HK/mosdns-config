@@ -1,6 +1,6 @@
 log:
   level: info
-  file: "/tmp/log/mosdns.log"
+  file: "/var/log/mosdns.log"
 
 # API 入口设置     
 api:
@@ -134,7 +134,7 @@ plugins:
       - exec: jump remote_sequence
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip_cf
-      - exec: jump reforward_fastly_remote
+      # - exec: jump reforward_fastly_remote
       - exec: accept # 查询失败也会停止，防止后续查询回落到国内上游
 
   - tag: default_sequence # 默认使用 fallback
@@ -143,7 +143,7 @@ plugins:
       - exec: jump fallback_sequence
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip_cf
-      - exec: jump reforward_fastly_fallback
+      # - exec: jump reforward_fastly_fallback
       - exec: accept # 查询失败也会停止，防止后续查询回落到国内上游
 
   - tag: default_sequence_original # 使用 fallback，不替换 CDN IP
@@ -161,7 +161,6 @@ plugins:
   - tag: ali_sequence
     type: sequence
     args:
-      # - exec: prefer_ipv4
       - exec: $forward_alidns
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip_cf
@@ -193,6 +192,10 @@ plugins:
         exec: reject 3 # 屏蔽 QTYPE 65
 
       - exec: $hosts
+      - exec: jump has_resp_sequence
+      - exec: $hosts_fastly
+      - exec: jump has_resp_sequence
+      - exec: $hosts_akamai
       - exec: jump has_resp_sequence
 
       - matches:
@@ -254,7 +257,7 @@ plugins:
           - cname $akamailist
         exec: accept
       - exec: jump change_cdn_ip_cf
-      - exec: jump reforward_fastly_fallback
+      # - exec: jump reforward_fastly_fallback
 
       # 策略 2：注释上方策略 1 的配置，默认查询可信 DNS，可以避免“DNS 泄露”，对上游稳定性要求更高
       - exec: jump default_sequence # 其余域名使用可信 DNS
