@@ -1,4 +1,12 @@
 plugins:
+  - tag: redirect
+    type: redirect
+    args:
+      # rules:
+      #   - cdn.jsdelivr.net cdn.jsdelivr.net.cdn.cloudflare.net
+      files:  # 从文件载入规则
+        - "/etc/mosdns/rule/redirect.txt"
+
   - tag: "hosts"
     type: "hosts"
     args:
@@ -41,37 +49,37 @@ plugins:
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/white_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/white_list.txt
+        - "/etc/mosdns/rule/white_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt
 
   - tag: blocklist
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/block_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/block_list.txt
+        - "/etc/mosdns/rule/block_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/block_list.txt
 
   - tag: greylist # 用来存放被污染的域名。
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/grey_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/grey_list.txt
+        - "/etc/mosdns/rule/grey_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt
 
   - tag: ipv6list # 用来存放优先走 ipv6 的域名。
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/ipv6_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/ipv6_domain_list.txt
+        - "/etc/mosdns/rule/ipv6_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/ipv6_domain_list.txt
 
   - tag: originallist # 用来存放优不进行 IP 优选的域名。
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/original_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/original_domain_list.txt
+        - "/etc/mosdns/rule/original_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/original_domain_list.txt
 
   - tag: akamailist
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/akamai_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/akamai_domain_list.txt
+        - "/etc/mosdns/rule/akamai_domain_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/akamai_domain_list.txt
 
   - tag: cdnlist
     type: domain_set
@@ -90,13 +98,25 @@ plugins:
       files:
         - "/etc/mosdns/rule/cdn_domain_list.txt" # https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt
 
+  - tag: jp_dns_list
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/jp_dns_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/jp_dns_list.txt
+
+  - tag: us_dns_list
+    type: domain_set
+    args:
+      files:
+        - "/etc/mosdns/rule/us_dns_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/us_dns_list.txt
+
   - tag: gfwlist
     type: domain_set
     args:
       files:
         - "/etc/mosdns/rule/gfw.txt" # https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt
         - "/etc/mosdns/rule/greatfire.txt" # https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/greatfire.txt
-        - "/etc/mosdns/rule/custom_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/custom_list.txt
+        - "/etc/mosdns/rule/custom_list.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/custom_list.txt
 
   - tag: banned_ip
     type: ip_set
@@ -110,7 +130,13 @@ plugins:
         # - "/etc/mosdns/rule/telegram.txt" # https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt
         - "/etc/mosdns/rule/twitter.txt" # https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/twitter.txt
 
-  - tag: cloudflare_ip
+  - tag: cachefly_ipv4
+    type: ip_set
+    args:
+      files:
+        - "/etc/mosdns/rule/cachefly_ipv4.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/cachefly_ipv4.txt
+
+  - tag: cloudflare_ipv4
     type: ip_set
     args:
       files:
@@ -122,23 +148,29 @@ plugins:
       files:
         - "/etc/mosdns/rule/ipv6.txt" # https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt
 
-  - tag: cloudfront_ip
+  - tag: cloudfront_ipv4
     type: ip_set
     args:
       files:
-        - "/etc/mosdns/rule/cloudfront.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront.txt
+        - "/etc/mosdns/rule/cloudfront.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront.txt
 
   - tag: cloudfront_ipv6
     type: ip_set
     args:
       files:
-        - "/etc/mosdns/rule/cloudfront_ipv6.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/master/cloudfront_ipv6.txt
+        - "/etc/mosdns/rule/cloudfront_ipv6.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront_ipv6.txt
 
   - tag: fastly_ip
     type: ip_set
     args:
       files:
         - "/etc/mosdns/rule/fastly.txt" # https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/fastly.txt
+
+  - tag: cdn77_ipv4
+    type: ip_set
+    args:
+      files:
+        - "/etc/mosdns/rule/cdn77_ipv4.txt" # https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv4.txt
 
   - tag: "cache_0"
     type: "cache"

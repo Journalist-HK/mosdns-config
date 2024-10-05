@@ -1,31 +1,43 @@
 plugins:
-  # - tag: ecs_cn
+  # - tag: ecs_shanghai
   #   type: ecs_handler
   #   args:
   #     forward: false
-  #     preset: 58.208.0.0 # 电信，自行修改
+  #     preset: 61.170.0.0 # 电信，自行修改
   #     send: false
-  #     mask4: 12
-  #     mask6: 28
+  #     mask4: 18
 
-  - tag: ecs_tw
+  # - tag: ecs_tw
+  #   type: ecs_handler
+  #   args:
+  #     forward: false
+  #     preset: 168.95.0.0
+  #     send: false
+  #     mask4: 16
+
+  - tag: ecs_jp
     type: ecs_handler
     args:
       forward: false
-      preset: 168.95.0.0
+      preset: 13.78.0.0
       send: false
-      mask4: 16
-      # mask6: 40
-      
+      mask4: 17
 
-  - tag: ecs_us
+  - tag: ecs_sjc
     type: ecs_handler
     args:
       forward: false
-      preset: 38.106.0.0
+      preset: 151.101.48.0
       send: false
-      mask4: 18
-      # mask6: 40
+      mask4: 22
+
+  - tag: ecs_lax
+    type: ecs_handler
+    args:
+      forward: false
+      preset: 151.101.196.0
+      send: false
+      mask4: 22
 
   # 不应处理本地 DNS 请求，防止死循环。正确顺序应该是 dnsmasq --> OpenClash（可选）--> mosdns。
   # - tag: "forward_lan"
@@ -38,19 +50,31 @@ plugins:
   - tag: "forward_local"
     type: forward
     args:
-      concurrent: 2
+      concurrent: 1
       upstreams:
         - addr: "218.2.2.2" # 运营商 DNS，自行修改
         - addr: "218.4.4.4" # 运营商 DNS，自行修改
+        - addr: "240e:5a::6666" # 运营商 DNS，自行修改
+        - addr: "240e:5b::6666" # 运营商 DNS，自行修改
 
   - tag: "forward_alidns"
     type: forward
     args:
       concurrent: 1
       upstreams:
+        - addr: "223.5.5.5"
         - addr: "quic://223.6.6.6:853"
         - addr: "https://dns.alidns.com/dns-query"
           dial_addr: "223.5.5.5"
+          enable_http3: false
+
+  - tag: "forward_dnspod"
+    type: forward
+    args:
+      concurrent: 1
+      upstreams:
+        - addr: "https://doh.pub/dns-query"
+          dial_addr: "120.53.53.53"
           enable_http3: false
 
   - tag: "forward_easy"
@@ -59,7 +83,7 @@ plugins:
       concurrent: 1
       upstreams:
         - addr: "https://doh.apad.pro/dns-query"
-          bootstrap: "218.2.2.2"
+          bootstrap: "223.5.5.5"
           enable_http3: false
 
   - tag: "forward_remote"
@@ -86,8 +110,7 @@ plugins:
     type: sequence
     args:
       - exec: prefer_ipv4
-      # - exec: $ecs_tw
-      - exec: $ecs_us
+      - exec: $ecs_sjc
       - exec: $forward_remote
       - exec: return
 
@@ -103,8 +126,7 @@ plugins:
     type: sequence
     args:
       - exec: prefer_ipv4
-      # - exec: $ecs_tw
-      - exec: $ecs_us
+      - exec: $ecs_sjc # 默认美国 ECS
       - exec: $fallback
       - exec: return
 
@@ -113,7 +135,7 @@ plugins:
     args:
       - exec: prefer_ipv6
       - exec: $fallback
-      - exec: return
+      - exec: accept
 
   - tag: has_resp_sequence
     type: sequence

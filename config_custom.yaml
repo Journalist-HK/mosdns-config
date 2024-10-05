@@ -9,15 +9,15 @@ api:
 # []string, 从其他配置文件载入 plugins 插件设置。
 # include 的插件会比本配置文件中的插件先初始化。
 include: 
-  - "/etc/mosdns/load_rules_openwrt.yaml"
+  - "/etc/mosdns/load_rules.yaml"
   - "/etc/mosdns/forward.yaml"
 
 plugins:
-  # IP 优选，需要定期修改，最好填写 2 - 4 个
-  - tag: blackhole_akamai # 替换部分 AKAMAI 域名 IP，详见 https://github.com/IrineSistiana/mosdns/discussions/489
+  # IP 优选，需要定期修改，最好填写 2-4 个
+  - tag: blackhole_akamai_ipv4 # 替换部分 AKAMAI 域名 IP，详见 https://github.com/IrineSistiana/mosdns/discussions/489
     type: sequence
     args:
-      - exec: black_hole 119.149.188.15 202.142.229.59 223.44.51.33 # best_akamai_ip
+      - exec: black_hole 119.149.188.15 202.142.229.59 223.44.51.33 # best_akamai_ipv4
       - exec: ttl 3600-0
       - exec: accept # 运行 black_hole 之后接受请求，不再进行后续判断
 
@@ -28,10 +28,17 @@ plugins:
       - exec: ttl 3600-0
       - exec: accept
 
-  - tag: blackhole_cloudflare
+  - tag: blackhole_cachefly_ipv4
     type: sequence
     args:
-      - exec: black_hole 104.17.7.198 104.17.61.114 162.159.0.195 162.159.7.75 # best_cloudflare_ip
+      - exec: black_hole 205.234.175.0 # best_cachefly_ipv4
+      - exec: ttl 3600-0
+      - exec: accept
+
+  - tag: blackhole_cloudflare_ipv4
+    type: sequence
+    args:
+      - exec: black_hole 104.17.7.198 104.17.61.114 162.159.0.195 162.159.7.75 # best_cloudflare_ipv4
       - exec: ttl 3600-0
       - exec: accept
 
@@ -42,10 +49,10 @@ plugins:
       - exec: ttl 3600-0
       - exec: accept
 
-  - tag: blackhole_cloudfront
+  - tag: blackhole_cloudfront_ipv4
     type: sequence
     args:
-      - exec: black_hole 18.172.26.139 18.172.28.94 52.84.151.126 52.84.228.48 # best_cloudfront_ip
+      - exec: black_hole 18.172.26.139 18.172.28.94 52.84.151.126 52.84.228.48 # best_cloudfront_ipv4
       - exec: ttl 3600-0
       - exec: accept
 
@@ -56,32 +63,23 @@ plugins:
       - exec: ttl 3600-0
       - exec: accept
 
-  - tag: remote_sequence_us # 使用 US ECS 请求上游
+  - tag: blackhole_cdn77_ipv6
     type: sequence
     args:
-      - exec: prefer_ipv4
-      - exec: $ecs_us
-      - exec: $forward_remote
-      - exec: jump has_resp_sequence
-
-  - tag: fallback_sequence_us # 使用 US ECS 请求上游
-    type: sequence
-    args:
-      - exec: prefer_ipv4
-      - exec: $ecs_us
-      - exec: $fallback
-      - exec: jump has_resp_sequence
+      - exec: black_hole ::0 # best_cdn77_ipv6
+      - exec: ttl 3600-0
+      - exec: accept
 
   - tag: change_cdn_ip_akamai
     type: sequence
     args:
       - matches:
-          - cname akamai.net
+          - cname akamai.net akamaized.net edgesuite.net
           - qtype 1
           - has_wanted_ans # 防止纯 IPV6 域名被替换
-        exec: jump blackhole_akamai
+        exec: jump blackhole_akamai_ipv4
       - matches:
-          - cname akamai.net
+          - cname akamai.net akamaized.net edgesuite.net
           - qtype 28
           - has_wanted_ans
         exec: jump blackhole_akamai_ipv6 # 如果不需要对纯 IPV6 域名优选可以去掉这一段
@@ -91,41 +89,64 @@ plugins:
     type: sequence
     args:
       - matches:
+          - cname full:custom.crisp.help pacloudflare.com cc-ecdn.net # Cloudflare Spectrum、Salesforce 不进行替换
+        exec: return
+      - matches:
           - qtype 1
-          - has_wanted_ans
-          - resp_ip $cloudflare_ip
-        exec: jump blackhole_cloudflare
+          - resp_ip $cloudflare_ipv4
+        exec: jump blackhole_cloudflare_ipv4
+      - matches:
+          - qtype 1
+          - resp_ip $cloudfront_ipv4
+        exec: jump blackhole_cloudfront_ipv4
       - matches:
           - qtype 1
           - has_wanted_ans
-          - resp_ip $cloudfront_ip
-        exec: jump blackhole_cloudfront
+          - cname cloudfront.net
+        exec: jump blackhole_cloudfront_ipv4
+      - matches:
+          - qtype 1
+          - resp_ip $cachefly_ipv4
+        exec: jump blackhole_cachefly_ipv4
       - matches:
           - qtype 28
-          - has_wanted_ans
           - resp_ip $cloudflare_ipv6
         exec: jump blackhole_cloudflare_ipv6
       - matches:
           - qtype 28
-          - has_wanted_ans
           - resp_ip $cloudfront_ipv6
         exec: jump blackhole_cloudfront_ipv6
+      - matches:
+          - qtype 28
+          - has_wanted_ans
+          - cname cloudfront.net
+        exec: jump blackhole_cloudfront_ipv6
+      - matches:
+          - qtype 28
+          - has_wanted_ans
+          - qname regexp:.+\.rsc\.cdn77\.org$
+        exec: jump blackhole_cdn77_ipv6 # 返回 ::0 屏蔽 ipv6
+      - matches:
+          - qtype 28
+          - has_wanted_ans
+          - cname rsc.cdn77.org
+        exec: jump blackhole_cdn77_ipv6 # 返回 ::0 屏蔽 ipv6
       - exec: return
 
-  - tag: reforward_fastly_remote # 使用 US ECS 再次查询优化 Fastly CDN 结果
+  - tag: jp_sequence
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $ecs_jp
+      - exec: $forward_easy
+      - exec: accept
+
+  - tag: reforward_cdn77_jp # 使用 JP ECS 再次查询优化 CDN 77 结果
     type: sequence
     args:
       - matches:
-          - resp_ip $fastly_ip
-        exec: jump remote_sequence_us
-      - exec: return
-
-  - tag: reforward_fastly_fallback # 使用 US ECS 再次查询优化 Fastly CDN 结果
-    type: sequence
-    args:
-      - matches:
-          - resp_ip $fastly_ip
-        exec: jump fallback_sequence_us
+          - resp_ip $cdn77_ipv4
+        exec: jump jp_sequence
       - exec: return
 
   - tag: gfw_sequence # 处理 GFW 域名
@@ -134,7 +155,7 @@ plugins:
       - exec: jump remote_sequence
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip_cf
-      # - exec: jump reforward_fastly_remote
+      - exec: jump reforward_cdn77_jp
       - exec: accept # 查询失败也会停止，防止后续查询回落到国内上游
 
   - tag: default_sequence # 默认使用 fallback
@@ -143,46 +164,70 @@ plugins:
       - exec: jump fallback_sequence
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip_cf
-      # - exec: jump reforward_fastly_fallback
-      - exec: accept # 查询失败也会停止，防止后续查询回落到国内上游
+      - exec: jump reforward_cdn77_jp
+      - exec: accept
 
   - tag: default_sequence_original # 使用 fallback，不替换 CDN IP
     type: sequence
     args:
       - exec: jump fallback_sequence
-      - exec: jump has_resp_sequence
+      - exec: accept
 
-  - tag: default_sequence_ipv6 # 使用 fallback，但不替换 CDN IP，IPV6 优先
+  - tag: local_sequence
     type: sequence
     args:
-      - exec: jump fallback_sequence_ipv6
-      - exec: jump has_resp_sequence
-
-  - tag: ali_sequence
-    type: sequence
-    args:
-      - exec: $forward_alidns
+      - exec: $forward_local
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip_cf
-      - exec: jump reforward_fastly_fallback
-      - exec: accept # 查询失败也会停止，防止后续查询其他上游
+      - exec: jump reforward_cdn77_jp
+      - exec: accept
 
   - tag: ali_sequence_ipv4
     type: sequence
     args:
       - exec: prefer_ipv4
+      # 江苏电信如使用 alidns 请添加其他地区 ECS 否则易跳反诈
+      # - exec: $ecs_shanghai
       - exec: $forward_alidns
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip_cf
-      - exec: jump reforward_fastly_fallback
-      - exec: accept # 查询失败也会停止，防止后续查询其他上游
+      - exec: jump reforward_cdn77_jp
+      - exec: accept
 
-  # - tag: reforward_banned_ip
-  #   type: sequence
-  #   args:
-  #     - exec: debug_print "DNS poisoning detected"
-  #     - exec: jump fallback_sequence
-  #     - exec: return
+  - tag: tencent_sequence_ipv4
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $forward_dnspod
+      - exec: jump change_cdn_ip_akamai
+      - exec: jump change_cdn_ip_cf
+      - exec: jump reforward_cdn77_jp
+      - exec: accept
+
+  # 阿里日本准确度高，腾讯美国准确度高
+  - tag: ali_sequence_jp
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $ecs_jp
+      - exec: $forward_alidns
+      - exec: accept
+
+  - tag: tencent_sequence_sjc
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $ecs_sjc
+      - exec: $forward_dnspod
+      - exec: accept
+
+  - tag: tencent_sequence_lax
+    type: sequence
+    args:
+      - exec: prefer_ipv4
+      - exec: $ecs_lax
+      - exec: $forward_dnspod
+      - exec: accept
 
   - tag: main
     type: sequence
@@ -191,6 +236,7 @@ plugins:
           - qtype 65
         exec: reject 3 # 屏蔽 QTYPE 65
 
+      - exec: $redirect
       - exec: $hosts
       - exec: jump has_resp_sequence
       - exec: $hosts_fastly
@@ -205,7 +251,7 @@ plugins:
       # - exec: jump has_resp_sequence
 
       - matches:
-          - qname $whitelist # DDNS 和 其他白名单
+          - qname $whitelist # DDNS 和其他白名单
         exec: $forward_local
       - exec: ttl 5-180
       - exec: jump has_resp_sequence
@@ -218,7 +264,7 @@ plugins:
 
       - matches:
           - qname $ipv6list
-        exec: jump default_sequence_ipv6 # IPV6 域名请求 EASY DNS
+        exec: jump fallback_sequence_ipv6 # IPV6 域名请求 EASY DNS
 
       - matches:
           - qname $originallist # 不进行 IP 替换的域名，通常是游戏等使用非常用端口的域名
@@ -229,26 +275,35 @@ plugins:
         exec: jump default_sequence # 污染域名请求 EASY DNS
 
       - matches:
-          - qname $geosite_cn # 国内域名走阿里 DNS，也可以走运营商 DNS
-        exec: jump ali_sequence # 如果使用策略 1，可以考虑去掉这一段。去掉后，当阿里 DNS 查询失败后会查询可信上游。
+          - qname $jp_dns_list $akamailist
+        exec: jump ali_sequence_jp
 
       - matches:
-          - qname $cdnlist apple.com icloud.com edgesuite.net msftconnecttest.com trafficmanager.net
-        exec: jump ali_sequence_ipv4 # 我这里用阿里 DNS 请求 AKAMAI 域名返回东京电信的概率较高，可以替换成其他。
+          - qname $us_dns_list
+        exec: jump tencent_sequence_lax # 给了 LAX 和 SJC，自由选择
+
+      - matches:
+          - qname $cdnlist apple.com edgesuite.net icloud.com live.com live.net msftconnecttest.com office365.com office.com outlook.com trafficmanager.net xbox.com
+        exec: jump tencent_sequence_ipv4 # 我这里用腾讯 DNS 返回东京电信的概率较高，可以替换成其他。
 
       - matches:
           - qname $gfwlist
-        exec: jump gfw_sequence # GFW 域名直接请求海外 DNS
+        exec: jump gfw_sequence # GFW 域名请求海外 DNS
 
       - matches:
-          - qname $akamailist
-        exec: jump ali_sequence_ipv4 # 我这里用阿里 DNS 请求 AKAMAI 域名返回东京电信的概率较高，可以替换成其他。
+          - qname $geosite_cn # 国内域名走运营商 DNS
+        exec: jump local_sequence
 
       # 策略 1：默认查询国内上游，入返回境外 IP，再次将域名交给可信 DNS 查询。
-      - exec: $forward_alidns # 默认使用阿里 DNS，如果担心 DNS 泄露，可以调换顺序，把 fallback 放在前面，代价是延迟会变高。这种情况下可以使用前面的 cdnlist 域名先做判断。
+      # 江苏电信如使用 alidns 请添加其他地区 ECS 否则易跳反诈
+      # - exec: $ecs_shanghai
+      - exec: $forward_alidns # 默认使用阿里 DNS
       - matches:
           - resp_ip $banned_ip # 记录被污染域名，日后加入 gerylist。可以去掉。
         exec: debug_print "DNS poisoning detected"
+      # - matches:
+      #     - resp_ip 61.160.148.90
+      #   exec: debug_print "js96110"
       - matches:
           - "resp_ip $geoip_cn"
         exec: accept # 返回国内 IP 直接接受
@@ -257,8 +312,7 @@ plugins:
           - cname $akamailist
         exec: accept
       - exec: jump change_cdn_ip_cf
-      # - exec: jump reforward_fastly_fallback
-
+      - exec: jump reforward_cdn77_jp
       # 策略 2：注释上方策略 1 的配置，默认查询可信 DNS，可以避免“DNS 泄露”，对上游稳定性要求更高
       - exec: jump default_sequence # 其余域名使用可信 DNS
 
