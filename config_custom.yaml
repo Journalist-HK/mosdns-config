@@ -211,6 +211,9 @@ plugins:
       - exec: prefer_ipv4
       - exec: $ecs_jp
       - exec: $forward_alidns
+      - exec: jump change_cdn_ip_akamai
+      - exec: jump change_cdn_ip_cf
+      # - exec: jump reforward_cdn77_jp
       - exec: accept
 
   - tag: tencent_sequence_sjc
@@ -219,6 +222,9 @@ plugins:
       - exec: prefer_ipv4
       - exec: $ecs_sjc
       - exec: $forward_dnspod
+      - exec: jump change_cdn_ip_akamai
+      - exec: jump change_cdn_ip_cf
+      - exec: jump reforward_cdn77_jp
       - exec: accept
 
   - tag: tencent_sequence_lax
@@ -227,6 +233,9 @@ plugins:
       - exec: prefer_ipv4
       - exec: $ecs_lax
       - exec: $forward_dnspod
+      - exec: jump change_cdn_ip_akamai
+      - exec: jump change_cdn_ip_cf
+      - exec: jump reforward_cdn77_jp
       - exec: accept
 
   - tag: main
