@@ -31,6 +31,8 @@ dns:
 
 1. 此配置在电信网络下测试，其他运营商请自行测试，更换上游 DNS、hosts 文件、black_hole 目标。
 
+1. 首次启动前先运行 /script/update.sh 来更新规则，可以设置为 crontab 定时任务。
+
 1. 如果使用 TUN 模式自动设置路由，不要劫持运营商的 DNS，或者将运营商的 DNS 去掉，只用非 53 端口的上游。[#2](https://github.com/Journalist-HK/mosdns-config/issues/2)
 
 1. 可以通过 socks5 代理来提高境外 DNS 的联通性。建议使用单独的代理程序，避免相互依赖。
@@ -47,8 +49,6 @@ dns:
             - addr: "https://162.159.46.1/dns-query"
               enable_http3: false
     ```
-
-1. 使用 crontab 定时运行 /script/update 来更新规则。
 
 1. 如果在 log 中观察到污染记录，可以将域名添加至 greylist，避免后续再次查询国内上游。
 

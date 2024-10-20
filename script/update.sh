@@ -14,7 +14,6 @@ mkdir -p /tmp/easymosdns \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/custom_list.txt > /tmp/easymosdns/custom_list.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/gfw_ip_list.txt > /tmp/easymosdns/gfw_ip_list.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt > /tmp/easymosdns/grey_list.txt \
-# && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list_js.txt > /tmp/easymosdns/grey_list_js.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_akamai.txt > /tmp/easymosdns/hosts_akamai.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_fastly.txt > /tmp/easymosdns/hosts_fastly.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/jp_dns_list.txt > /tmp/easymosdns/jp_dns_list.txt \
