@@ -74,12 +74,12 @@ plugins:
     type: sequence
     args:
       - matches:
-          - cname akamai.net akamaized.net edgesuite.net
+          - cname akamai.net akamaized.net
           - qtype 1
           - has_wanted_ans # 防止纯 IPV6 域名被替换
         exec: jump blackhole_akamai_ipv4
       - matches:
-          - cname akamai.net akamaized.net edgesuite.net
+          - cname akamai.net akamaized.net
           - qtype 28
           - has_wanted_ans
         exec: jump blackhole_akamai_ipv6 # 如果不需要对纯 IPV6 域名优选可以去掉这一段
@@ -292,7 +292,7 @@ plugins:
         exec: jump tencent_sequence_lax # 给了 LAX 和 SJC，自由选择
 
       - matches:
-          - qname $cdnlist apple.com edgesuite.net icloud.com live.com live.net msftconnecttest.com office365.com office.com outlook.com trafficmanager.net xbox.com
+          - qname $cdnlist apple.com icloud.com live.com live.net msftconnecttest.com office365.com office.com outlook.com trafficmanager.net xbox.com
         exec: jump tencent_sequence_ipv4 # 我这里用腾讯 DNS 返回东京电信的概率较高，可以替换成其他。
 
       - matches:
