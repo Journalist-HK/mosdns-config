@@ -70,6 +70,20 @@ plugins:
       - exec: ttl 3600-0
       - exec: accept
 
+  - tag: blackhole_ghs_ipv4
+    type: sequence
+    args:
+      - exec: black_hole 142.250.196.243 # best_ghs_ipv4
+      - exec: ttl 3600-0
+      - exec: accept
+
+  - tag: blackhole_ghs_ipv6
+    type: sequence
+    args:
+      - exec: black_hole 2404:6800:4004:821::2013 # best_ghs_ipv6
+      - exec: ttl 3600-0
+      - exec: accept
+
   - tag: blackhole_cdn77_ipv6
     type: sequence
     args:
@@ -119,6 +133,10 @@ plugins:
           - resp_ip $sucuri_ipv4
         exec: jump blackhole_sucuri_ipv4
       - matches:
+          - qtype 1
+          - cname full:ghs.googlehosted.com
+        exec: jump blackhole_ghs_ipv4
+      - matches:
           - qtype 28
           - resp_ip $cloudflare_ipv6
         exec: jump blackhole_cloudflare_ipv6
@@ -141,6 +159,10 @@ plugins:
           - has_wanted_ans
           - cname rsc.cdn77.org
         exec: jump blackhole_cdn77_ipv6 # 返回 ::0 屏蔽 ipv6
+      - matches:
+          - qtype 28
+          - cname full:ghs.googlehosted.com
+        exec: jump blackhole_ghs_ipv6
       - exec: return
 
   - tag: jp_sequence

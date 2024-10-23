@@ -1,3 +1,4 @@
 # hosts
 # https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts.txt
 cdp.cloud.unity3d.com 34.107.172.168
+ghs.googlehosted.com 142.250.196.243 2404:6800:4004:821::2013

@@ -48,6 +48,10 @@ Fastly 需要按照一定规则更换 IP，不太适合使用 `black_hole`（需
 
 替换 AS30148 Anycast 192.124.249.0/24 为 SJC 192.88.134.0/24。注意只有部分 IP 开放了端口，先 tcping 测试一下。
 
+## ghs.googlehosted.com
+
+替换 CNAME 为 ghs.googlehosted.com 的域名，电信建议香港或者日本。
+
 ## 通用规则
 
 添加了日本和美国 EDNS 列表，可以根据个人需要添加域名。
