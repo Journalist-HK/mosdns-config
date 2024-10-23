@@ -63,6 +63,13 @@ plugins:
       - exec: ttl 3600-0
       - exec: accept
 
+  - tag: blackhole_sucuri_ipv4
+    type: sequence
+    args:
+      - exec: black_hole 192.88.134.24 192.88.134.30 # best_sucuri_ipv4
+      - exec: ttl 3600-0
+      - exec: accept
+
   - tag: blackhole_cdn77_ipv6
     type: sequence
     args:
@@ -85,7 +92,7 @@ plugins:
         exec: jump blackhole_akamai_ipv6 # 如果不需要对纯 IPV6 域名优选可以去掉这一段
       - exec: return
 
-  - tag: change_cdn_ip_cf # https://github.com/XIU2/CloudflareSpeedTest/discussions/317
+  - tag: change_cdn_ip # https://github.com/XIU2/CloudflareSpeedTest/discussions/317
     type: sequence
     args:
       - matches:
@@ -101,13 +108,16 @@ plugins:
         exec: jump blackhole_cloudfront_ipv4
       - matches:
           - qtype 1
-          - has_wanted_ans
           - cname cloudfront.net
         exec: jump blackhole_cloudfront_ipv4
       - matches:
           - qtype 1
           - resp_ip $cachefly_ipv4
         exec: jump blackhole_cachefly_ipv4
+      - matches:
+          - qtype 1
+          - resp_ip $sucuri_ipv4
+        exec: jump blackhole_sucuri_ipv4
       - matches:
           - qtype 28
           - resp_ip $cloudflare_ipv6
@@ -154,7 +164,7 @@ plugins:
     args:
       - exec: jump remote_sequence
       - exec: jump change_cdn_ip_akamai
-      - exec: jump change_cdn_ip_cf
+      - exec: jump change_cdn_ip
       - exec: jump reforward_cdn77_jp
       - exec: accept # 查询失败也会停止，防止后续查询回落到国内上游
 
@@ -163,7 +173,7 @@ plugins:
     args:
       - exec: jump fallback_sequence
       - exec: jump change_cdn_ip_akamai
-      - exec: jump change_cdn_ip_cf
+      - exec: jump change_cdn_ip
       - exec: jump reforward_cdn77_jp
       - exec: accept
 
@@ -178,7 +188,7 @@ plugins:
     args:
       - exec: $forward_local
       - exec: jump change_cdn_ip_akamai
-      - exec: jump change_cdn_ip_cf
+      - exec: jump change_cdn_ip
       - exec: jump reforward_cdn77_jp
       - exec: accept
 
@@ -190,7 +200,7 @@ plugins:
       # - exec: $ecs_shanghai
       - exec: $forward_alidns
       - exec: jump change_cdn_ip_akamai
-      - exec: jump change_cdn_ip_cf
+      - exec: jump change_cdn_ip
       - exec: jump reforward_cdn77_jp
       - exec: accept
 
@@ -200,7 +210,7 @@ plugins:
       - exec: prefer_ipv4
       - exec: $forward_dnspod
       - exec: jump change_cdn_ip_akamai
-      - exec: jump change_cdn_ip_cf
+      - exec: jump change_cdn_ip
       - exec: jump reforward_cdn77_jp
       - exec: accept
 
@@ -212,7 +222,7 @@ plugins:
       - exec: $ecs_jp
       - exec: $forward_alidns
       - exec: jump change_cdn_ip_akamai
-      - exec: jump change_cdn_ip_cf
+      - exec: jump change_cdn_ip
       # - exec: jump reforward_cdn77_jp
       - exec: accept
 
@@ -223,7 +233,7 @@ plugins:
       - exec: $ecs_sjc
       - exec: $forward_dnspod
       - exec: jump change_cdn_ip_akamai
-      - exec: jump change_cdn_ip_cf
+      - exec: jump change_cdn_ip
       - exec: jump reforward_cdn77_jp
       - exec: accept
 
@@ -234,7 +244,7 @@ plugins:
       - exec: $ecs_lax
       - exec: $forward_dnspod
       - exec: jump change_cdn_ip_akamai
-      - exec: jump change_cdn_ip_cf
+      - exec: jump change_cdn_ip
       - exec: jump reforward_cdn77_jp
       - exec: accept
 
@@ -320,7 +330,7 @@ plugins:
       - matches: # 有些 AKAMAI 的域名不能直接替换 IP（没有绑定全证书），此处多加一次判断，接受所有 AKAMAI CDN 的 IP。
           - cname $akamailist
         exec: accept
-      - exec: jump change_cdn_ip_cf
+      - exec: jump change_cdn_ip
       - exec: jump reforward_cdn77_jp
       # 策略 2：注释上方策略 1 的配置，默认查询可信 DNS，可以避免“DNS 泄露”，对上游稳定性要求更高
       - exec: jump default_sequence # 其余域名使用可信 DNS

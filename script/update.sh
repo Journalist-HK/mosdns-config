@@ -21,6 +21,7 @@ mkdir -p /tmp/easymosdns \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/ipv6_domain_list.txt > /tmp/easymosdns/ipv6_domain_list.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/private.txt > /tmp/easymosdns/private.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/rediect.txt > /tmp/easymosdns/rediect.txt \
+&& curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/sucuri_ipv4.txt > /tmp/easymosdns/sucuri_ipv4.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/us_dns_list.txt > /tmp/easymosdns/us_dns_list.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt > /tmp/easymosdns/white_list.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt > /tmp/easymosdns/facebook.txt \

@@ -22,7 +22,7 @@
 
 ## Fastly
 
-Fastly 使用 Anycast IP (151.101.0.0/22)，通常会由地理位置在日本的服务器响应。这条线路质量很差，更换成 LAX 或 SJC 的 Unicast IP 效果明显更好。
+Fastly 使用 Anycast IP (151.101.0.0/22)，通常会由地理位置在日本的服务器响应。这条线路质量很差，替换为 LAX 或 SJC 的 Unicast IP 效果明显更好。
 
 Fastly 需要按照一定规则更换 IP，不太适合使用 `black_hole`（需要写 1024 条），这个配置还是选择使用 [hosts 文件](https://github.com/Journalist-HK/Rules/blob/main/hosts_fastly.txt)，更好的方法是使用自定义的插件（WIP）。具体规则请参考 [[讨论] 实现 fastly 优选线路的方案](https://github.com/IrineSistiana/mosdns/discussions/511)。
 
@@ -43,6 +43,10 @@ Fastly 需要按照一定规则更换 IP，不太适合使用 `black_hole`（需
 ### akamaiedge.net
 
 规则尚不清楚，使用 [hosts 文件](https://github.com/Journalist-HK/Rules/blob/main/hosts_akamai.txt)。
+
+## Sucuri
+
+替换 AS30148 Anycast 192.124.249.0/24 为 SJC 192.88.134.0/24。注意只有部分 IP 开放了端口，先 tcping 测试一下。
 
 ## 通用规则
 
