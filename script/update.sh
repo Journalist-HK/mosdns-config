@@ -20,7 +20,7 @@ mkdir -p /tmp/easymosdns \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/original_domain_list.txt > /tmp/easymosdns/original_domain_list.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/ipv6_domain_list.txt > /tmp/easymosdns/ipv6_domain_list.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/private.txt > /tmp/easymosdns/private.txt \
-&& curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/rediect.txt > /tmp/easymosdns/rediect.txt \
+&& curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/redirect.txt > /tmp/easymosdns/redirect.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/sucuri_ipv4.txt > /tmp/easymosdns/sucuri_ipv4.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/us_dns_list.txt > /tmp/easymosdns/us_dns_list.txt \
 && curl https://ghproxy.cc/https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt > /tmp/easymosdns/white_list.txt \
