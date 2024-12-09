@@ -302,6 +302,7 @@ plugins:
         exec: reject 5
 
       - exec: $cache_0 # 下面的请求结果均进入缓存
+      - exec: jump has_resp_sequence
 
       - matches:
           - qname $ipv6list
