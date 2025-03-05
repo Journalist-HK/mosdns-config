@@ -77,14 +77,14 @@ plugins:
           dial_addr: "120.53.53.53"
           enable_http3: false
 
-  - tag: "forward_easy"
-    type: "forward"
-    args:
-      concurrent: 1
-      upstreams:
-        - addr: "https://doh.apad.pro/dns-query"
-          bootstrap: "223.5.5.5"
-          enable_http3: false
+  # - tag: "forward_easy"
+  #   type: "forward"
+  #   args:
+  #     concurrent: 1
+  #     upstreams:
+  #       - addr: "https://doh.apad.pro/dns-query"
+  #         bootstrap: "223.5.5.5"
+  #         enable_http3: false
 
   - tag: "forward_remote"
     type: "forward"
@@ -114,28 +114,35 @@ plugins:
       - exec: $forward_remote
       - exec: return
 
-  - tag: "fallback"
-    type: "fallback"
-    args:
-      primary: forward_easy    # easy
-      secondary: forward_remote  # remote
-      threshold: 360           # 无响应回滚阈值。单位毫秒。默认 500 。
-      always_standby: true     # 副可执行插件始终待命。
-
-  - tag: fallback_sequence
-    type: sequence
-    args:
-      - exec: prefer_ipv4
-      - exec: $ecs_sjc # 默认美国 ECS
-      - exec: $fallback
-      - exec: return
-
-  - tag: fallback_sequence_ipv6
+  - tag: remote_sequence_ipv6
     type: sequence
     args:
       - exec: prefer_ipv6
-      - exec: $fallback
-      - exec: accept
+      - exec: $forward_remote
+      - exec: return
+
+  # - tag: "fallback"
+  #   type: "fallback"
+  #   args:
+  #     primary: forward_easy    # easy
+  #     secondary: forward_remote  # remote
+  #     threshold: 360           # 无响应回滚阈值。单位毫秒。默认 500 。
+  #     always_standby: true     # 副可执行插件始终待命。
+
+  # - tag: fallback_sequence
+  #   type: sequence
+  #   args:
+  #     - exec: prefer_ipv4
+  #     - exec: $ecs_sjc # 默认美国 ECS
+  #     - exec: $fallback
+  #     - exec: return
+
+  # - tag: fallback_sequence_ipv6
+  #   type: sequence
+  #   args:
+  #     - exec: prefer_ipv6
+  #     - exec: $fallback
+  #     - exec: accept
 
   - tag: has_resp_sequence
     type: sequence

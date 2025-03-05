@@ -7,7 +7,7 @@ yaml 文件应放在 `/etc/mosdns/` 目录下，可配合 luci-app-mosdns 使用
 
 可以搭配各种代理工具使用。需要将代理工具内置 DNS 指向 mosdns。顺序应为：Dnsmasq &rarr; 代理工具 &rarr; mosdns 或者 代理工具 &rarr; Dnsmasq &rarr; mosdns。无论使用何种顺序，请避免回环。
 
-示例 Clash DNS 配置：
+示例 Mihomo DNS 配置：
 
 ```yaml
 dns:
@@ -20,7 +20,7 @@ dns:
     - '127.0.0.1:5335'
 ```
 
-主要的分流思路是白名单走运营商 DNS，国内和 Akamai 走 [AliDNS](https://alidns.com/)，其余域名如解析为被墙或者国外 IP，采用可信 DNS。其中远程 DNS 使用 [EasyMosdns](https://apad.pro/dns-doh/)。
+主要的分流思路是白名单走运营商 DNS，国内和 Akamai 走 [AliDNS](https://alidns.com/)，其余域名如解析为被墙 IP，采用可信 DNS 再次查询。~~其中远程 DNS 使用 [EasyMosdns](https://apad.pro/dns-doh/)。~~ EasyMosdns 公益服务器已停止服务，目前配置文件中默认使用 CloudFlare DNS，请自行搭建或寻找替代服务以提高可用性。同时建议把默认 IP 替换成自己优选的 IP，然后注册 CloudFlare 账号使用 Zero Trust DNS 地址（https://<*your-id*\>.cloudflare-gateway.com/dns-query）。
 
 在此基础上，对于使用常见 CDN 的域名进行 IP 替换。具体策略见 [CDN 优化策略](CDN.md)。请定期更换 IP，防止不可用。推荐以下工具：
 
@@ -50,7 +50,7 @@ dns:
               enable_http3: false
     ```
 
-1. 如果在 log 中观察到污染记录，可以将域名添加至 greylist，避免后续再次查询国内上游。
+1. 如果在 log 中观察到污染记录，将域名手动添加至 greylist，避免后续再次查询国内上游。
 
 参考：
 

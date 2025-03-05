@@ -165,45 +165,33 @@ plugins:
         exec: jump blackhole_ghs_ipv6
       - exec: return
 
-  - tag: jp_sequence
-    type: sequence
-    args:
-      - exec: prefer_ipv4
-      - exec: $ecs_jp
-      - exec: $forward_easy
-      - exec: accept
-
-  - tag: reforward_cdn77_jp # 使用 JP ECS 再次查询优化 CDN 77 结果
-    type: sequence
-    args:
-      - matches:
-          - resp_ip $cdn77_ipv4
-        exec: jump jp_sequence
-      - exec: return
-
   - tag: gfw_sequence # 处理 GFW 域名
     type: sequence
     args:
       - exec: jump remote_sequence
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip
-      - exec: jump reforward_cdn77_jp
       - exec: accept # 查询失败也会停止，防止后续查询回落到国内上游
 
   - tag: default_sequence # 默认使用 fallback
     type: sequence
     args:
-      - exec: jump fallback_sequence
+      - exec: jump remote_sequence
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip
-      - exec: jump reforward_cdn77_jp
       - exec: accept
 
   - tag: default_sequence_original # 使用 fallback，不替换 CDN IP
     type: sequence
     args:
-      - exec: jump fallback_sequence
+      - exec: jump remote_sequence
       - exec: accept
+
+  - tag: banned_sequence
+    type: sequence
+    args:
+      - exec: debug_print "DNS poisoning detected"
+      - exec: jump default_sequence
 
   - tag: local_sequence
     type: sequence
@@ -211,7 +199,6 @@ plugins:
       - exec: $forward_local
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip
-      - exec: jump reforward_cdn77_jp
       - exec: accept
 
   - tag: ali_sequence_ipv4
@@ -223,7 +210,6 @@ plugins:
       - exec: $forward_alidns
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip
-      - exec: jump reforward_cdn77_jp
       - exec: accept
 
   - tag: tencent_sequence_ipv4
@@ -233,7 +219,6 @@ plugins:
       - exec: $forward_dnspod
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip
-      - exec: jump reforward_cdn77_jp
       - exec: accept
 
   # 阿里日本准确度高，腾讯美国准确度高
@@ -245,7 +230,6 @@ plugins:
       - exec: $forward_alidns
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip
-      # - exec: jump reforward_cdn77_jp
       - exec: accept
 
   - tag: tencent_sequence_sjc
@@ -256,7 +240,6 @@ plugins:
       - exec: $forward_dnspod
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip
-      - exec: jump reforward_cdn77_jp
       - exec: accept
 
   - tag: tencent_sequence_lax
@@ -267,7 +250,6 @@ plugins:
       - exec: $forward_dnspod
       - exec: jump change_cdn_ip_akamai
       - exec: jump change_cdn_ip
-      - exec: jump reforward_cdn77_jp
       - exec: accept
 
   - tag: main
@@ -306,7 +288,7 @@ plugins:
 
       - matches:
           - qname $ipv6list
-        exec: jump fallback_sequence_ipv6 # IPV6 域名请求 EASY DNS
+        exec: jump remote_sequence_ipv6 # IPV6 域名请求远程 DNS
 
       - matches:
           - qname $originallist # 不进行 IP 替换的域名，通常是游戏等使用非常用端口的域名
@@ -314,7 +296,7 @@ plugins:
 
       - matches:
           - qname $greylist
-        exec: jump default_sequence # 污染域名请求 EASY DNS
+        exec: jump default_sequence # 污染域名请求远程 DNS
 
       - matches:
           - qname $jp_dns_list $akamailist
@@ -341,23 +323,22 @@ plugins:
       # - exec: $ecs_shanghai
       - exec: $forward_alidns # 默认使用阿里 DNS
       - matches:
-          - resp_ip $banned_ip # 记录被污染域名，日后加入 gerylist。可以去掉。
-        exec: debug_print "DNS poisoning detected"
+          - resp_ip $banned_ip # 记录被污染域名，日后加入 gerylist。
+        exec: jump banned_sequence
       # - matches:
       #     - resp_ip 61.160.148.90
       #   exec: debug_print "js96110"
-      - matches:
-          - "resp_ip $geoip_cn"
-        exec: accept # 返回国内 IP 直接接受
-      - exec: jump change_cdn_ip_akamai
-      - matches: # 有些 AKAMAI 的域名不能直接替换 IP（没有绑定全证书），此处多加一次判断，接受所有 AKAMAI CDN 的 IP。
-          - cname $akamailist
-        exec: accept
+      # - matches:
+      #     - "resp_ip $geoip_cn"
+      #   exec: accept # 返回国内 IP 直接接受
+      # - exec: jump change_cdn_ip_akamai
+      # - matches: # 有些 AKAMAI 的域名不能直接替换 IP（没有绑定全证书），此处多加一次判断，接受所有 AKAMAI CDN 的 IP。
+      #     - cname $akamailist
+      #   exec: accept
       - exec: jump change_cdn_ip
-      - exec: jump reforward_cdn77_jp
       # 策略 2：注释上方策略 1 的配置，默认查询可信 DNS，可以避免“DNS 泄露”，对上游稳定性要求更高
-      - exec: jump default_sequence # 其余域名使用可信 DNS
-
+      # - exec: jump default_sequence # 其余域名使用可信 DNS
+      - exec: accept
 
   - tag: udp_server
     type: udp_server

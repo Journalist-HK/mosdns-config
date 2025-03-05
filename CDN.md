@@ -28,7 +28,7 @@ Fastly 需要按照一定规则更换 IP，不太适合使用 `black_hole`（需
 
 ## CDN77
 
-比较小众，目前不清楚具体的替换规则，使用日本 ECS 进行查询。
+比较小众，目前不清楚具体的替换规则，~~使用日本 ECS 进行查询~~。
 
 ## Akamai
 
@@ -38,7 +38,7 @@ Fastly 需要按照一定规则更换 IP，不太适合使用 `black_hole`（需
 
 同 Cloudflare，使用 `black_hole` 进行替换，但判断条件不是 `resp_ip` 而是 `cname`。测速链接：https://origin-a.akamaihd.net/Origin-Client-Download/origin/live/OriginSetup.exe
 
-电信建议韩国日本美国，移动联通建议香港。
+电信建议韩国美国，联通建议欧洲（少量香港和韩国直连段，不太好找），移动建议香港。
 
 ### akamaiedge.net
 
@@ -54,4 +54,4 @@ Fastly 需要按照一定规则更换 IP，不太适合使用 `black_hole`（需
 
 ## 通用规则
 
-添加了日本和美国 EDNS 列表，可以根据个人需要添加域名。
+使用域名列表在查询时使用对应的日本和美国 EDNS ，可以根据个人需要添加域名。
